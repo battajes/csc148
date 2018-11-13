@@ -1,0 +1,8 @@
+class Mystery:
+    """A mystery class without any implementation.
+    """
+    pass
+
+if __name__ == '__main__':
+    m = Mystery()
+    print(m)
