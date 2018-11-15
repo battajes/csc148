@@ -253,8 +253,29 @@ class SimplePrefixTree(Autocompleter):
             # *merged* with existing weight (depending on weight_type)
 
             # if new, add to appropriate location.
-             prefix[1]
-            pass
+
+            # template:
+            # def __len__(self):
+            #     if self.is_empty():  # tree is empty
+            #         return 0
+            #     elif self._subtrees == []:  # tree is a single item
+            #         return 1
+            #     else:  # tree has at least one subtree
+            #         size = 1  # count the root
+            #         for subtree in self._subtrees:
+            #             size += subtree.__len__()
+            #         return size
+            # def f(self) -> ...:
+            #     if self.is_empty():  # tree is empty
+            #         ...
+            #     elif self._subtrees == []:  # tree is a single value
+            #         ...
+            #     else:  # tree has at least one subtree
+            #         ...
+            #         for subtree in self._subtrees:
+            #             ...
+            #             subtree.f()...
+            #         ...
 
     def autocomplete(self, prefix: List,
                      limit: Optional[int] = None) -> List[Tuple[Any, float]]:

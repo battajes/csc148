@@ -165,16 +165,14 @@ class Tree:
         if self.is_empty():
             return False
         else:
-            occurs = 0
+            occurs = False
             if self._root == item:
                 return True
 
             for subtree in self._subtrees:
                 if subtree.__contains__(item):
-                    occurs += 1
-            if occurs > 0:
-                return True
-            return False
+                    occurs = True
+            return occurs
 
 
 if __name__ == '__main__':

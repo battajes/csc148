@@ -1,0 +1,6 @@
+[
+  "prep8_sample_test.py::test_num_positives",
+  "prep8_sample_test.py::test_maximum",
+  "prep8_sample_test.py::test_height",
+  "prep8_sample_test.py::test_contains"
+]

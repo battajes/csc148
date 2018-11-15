@@ -27,6 +27,8 @@ class Tree:
     _root: Optional[Any]
     # The list of all subtrees of this tree.
     _subtrees: List[Tree]
+    # The number of items in this tree
+    _size: int
 
     # === Representation Invariants ===
     # - If self._root is None then self._subtrees is an empty list.
@@ -44,6 +46,12 @@ class Tree:
         """
         self._root = root
         self._subtrees = subtrees
+        if root is None:
+            self._size = 0
+        else:
+            self._size = 1
+            for subtree in subtrees:
+                self._size += subtree._size
 
     def is_empty(self) -> bool:
         """Return whether this tree is empty.
@@ -67,13 +75,14 @@ class Tree:
         >>> len(t2)
         3
         """
-        if self.is_empty():
-            return 0
-        else:
-            size = 1  # count the root
-            for subtree in self._subtrees:
-                size += subtree.__len__()  # could also do len(subtree) here
-            return size
+        return self._size
+        # if self.is_empty():
+        #     return 0
+        # else:
+        #     size = 1  # count the root
+        #     for subtree in self._subtrees:
+        #         size += subtree.__len__()  # could also do len(subtree) here
+        #     return size
 
     def __contains__(self, item: Any) -> bool:
         """Return whether <item> is in this tree.
@@ -229,7 +238,7 @@ class Tree:
             #
             # 2. Update self._root. (Note that self._subtrees remains the same.)
             # self._root = leaf
-
+        self._size -= 1
     def _extract_leaf(self) -> Any:
         """Remove and return the leftmost leaf in a tree.
 
@@ -251,19 +260,46 @@ class Tree:
 
         Return 0.0 if this tree does not have internal values.
 
-        # >>> Tree(None, []).branching_factor()
-        # 0.0
-        # >>> t = Tree(1, [Tree(2, []), Tree(5, [])])
-        # >>> t.branching_factor()
-        # 2.0
-        # >>> lt = Tree(2, [Tree(4, []), Tree(5, [])])
-        # >>> rt = Tree(3, [Tree(6, []), Tree(7, []), Tree(8, []), Tree(9, []),\
-        #                   Tree(10, [])])
-        # >>> t = Tree(1, [lt, rt])
-        # >>> t.branching_factor()
-        # 3.0
+        >>> Tree(None, []).branching_factor()
+        0.0
+        >>> t = Tree(1, [Tree(2, []), Tree(5, [])])
+        >>> t.branching_factor()
+        2.0
+        >>> lt = Tree(2, [Tree(4, []), Tree(5, [])])
+        >>> rt = Tree(3, [Tree(6, []), Tree(7, []), Tree(8, []), Tree(9, []),\
+                          Tree(10, [])])
+        >>> t = Tree(1, [lt, rt])
+        >>> t.branching_factor()
+        3.0
         """
-        pass
+
+        if self.is_empty():
+            return 0.0
+
+        total, count = self._bf_helper()
+        return total / count
+
+    def _bf_helper(self)-> tuple:
+        """Return a tuple (x,y) where:
+
+                x is the total values in this tree, and
+                y is the number of branches in this tree.
+                """
+        if self.is_empty():
+            # I think this case is redundant.
+            return 0, 0
+        else:
+            total_branches = 0
+            number_internals = 0
+            if len(self._subtrees) > 0:
+                total_branches = len(self._subtrees)
+                number_internals = 1
+            for subtree in self._subtrees:
+                child_total, child_number = subtree._bf_helper()
+                total_branches += child_total
+                number_internals += child_number
+            return total_branches, number_internals
+
 
     # TODO: implement this method!
     def items_at_depth(self, d: int) -> List:
@@ -283,12 +319,18 @@ class Tree:
         >>> t3 = Tree(5, [Tree(6,[]),Tree(7,[])])
         >>> t3.items_at_depth(2)
         [6, 7]
+        >>> lt = Tree(2, [Tree(4, []), Tree(5, [])])
+        >>> rt = Tree(3, [Tree(6, []), Tree(7, []), Tree(8, []), Tree(9, []),\
+                          Tree(10, [])])
+        >>> t4 = Tree(1, [lt, rt])
+        >>> t4.items_at_depth(3)
+        [4, 5, 6, 7, 8, 9, 10]
         """
         if self.is_empty():
             # There is no item at given depth
             return []
         elif d == 1:
-            # We've found the item: now delete it.
+            # We've found the item: now return it.
             return [self._root]
         else:
             # Loop through each subtree, and return values from given depth
@@ -315,35 +357,31 @@ class Tree:
                   subtrees at random, and *recursively insert* the new item
                   into that subtree.
 
-        # >>> t = Tree(None, [])
-        # >>> t.insert(1)
-        # >>> 1 in t
-        # True
-        # >>> lt = Tree(2, [Tree(4, []), Tree(5, [])])
-        # >>> rt = Tree(3, [Tree(6, []), Tree(7, []), Tree(8, []), Tree(9, []),\
-        #                   Tree(10, [])])
-        # >>> t = Tree(1, [lt, rt])
-        # >>> t.insert(100)
-        # >>> 100 in t
+        >>> t = Tree(None, [])
+        >>> t.insert(1)
+        >>> 1 in t
+        True
+        >>> lt = Tree(2, [Tree(4, []), Tree(5, [])])
+        >>> rt = Tree(3, [Tree(6, []), Tree(7, []), Tree(8, []), Tree(9, []),\
+                          Tree(10, [])])
+        >>> t = Tree(1, [lt, rt])
+        >>> t.insert(100)
+        >>> 100 in t
         True
         """
         if self.is_empty():
-            # The item is not in the tree.
-            return False
-        elif self._root == item:
-            # We've found the item: now delete it.
-            self._delete_root()
-            return True
+            self._root = item
+        elif self._subtrees is []:
+            self._subtrees = [Tree(item, [])]
         else:
-            # Loop through each subtree, and stop the first time
-            # the item is deleted. (This is why a boolean is returned!)
-            for subtree in self._subtrees:
-                deleted = subtree.delete_item(item)
-                if deleted:
-                    return True
-                else:
-                    pass
-
+            rando = random.randint(1, 3)
+            if rando == 1:
+                self._subtrees.append(Tree(item, []))
+            else:
+                choices = len(self._subtrees)
+                chosen = random.randint(choices)
+                self._subtrees[chosen].insert(item)
+        self._size += 1
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
