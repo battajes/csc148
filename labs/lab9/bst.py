@@ -397,55 +397,103 @@ class BinarySearchTree:
               11
         <BLANKLINE>
         """
-        # TODO: implement this method
-        pass
+
+        # # preserve left and right subtrees
+        # pivot_tree = self._left
+        # # right_tree = self._right
+        #
+        # # alias copy of original tree
+        # old_root_tree = self
+        # # remove left side
+        # old_root_tree._left = BinarySearchTree(None)
+        #
+        # # preserve subtree that will need to be transferred
+        # # if not pivot_tree._right.is_empty():
+        # transfer_tree = pivot_tree._right
+        #
+        # pivot_tree._right = old_root_tree
+        # pivot_tree._right._left = transfer_tree
+        #
+        # old_root_tree = pivot_tree
+
+        old_root = self._root
+        transfer_tree = self._left._right
+        transfer_tree2 = self._right
+        self._root = self._left._root
+        self._left = self._left._left
+
+        self._right._root = old_root
+        self._right._left = transfer_tree
+        self._right._right = BinarySearchTree(transfer_tree2)
+
 
     def rotate_left(self) -> None:
         """Rotate the BST counter-clockwise,
         i.e. make the right subtree the root.
 
-        >>> bst = BinarySearchTree(7)
-        >>> left = BinarySearchTree(3)
-        >>> left._left = BinarySearchTree(2)
-        >>> left._right = BinarySearchTree(5)
-        >>> right = BinarySearchTree(11)
-        >>> right._left = BinarySearchTree(9)
-        >>> right._right = BinarySearchTree(13)
-        >>> bst._left = left
-        >>> bst._right = right
-        >>> print(bst)
-        7
-          3
-            2
-            5
-          11
-            9
-            13
-        <BLANKLINE>
-        >>> bst.rotate_left()
-        >>> print(bst)
-        11
-          7
-            3
-              2
-              5
-            9
-          13
-        <BLANKLINE>
-        >>> bst.rotate_left()
-        >>> print(bst)
-        13
-          11
-            7
-              3
-                2
-                5
-              9
-        <BLANKLINE>
+        # >>> bst = BinarySearchTree(7)
+        # >>> left = BinarySearchTree(3)
+        # >>> left._left = BinarySearchTree(2)
+        # >>> left._right = BinarySearchTree(5)
+        # >>> right = BinarySearchTree(11)
+        # >>> right._left = BinarySearchTree(9)
+        # >>> right._right = BinarySearchTree(13)
+        # >>> bst._left = left
+        # >>> bst._right = right
+        # >>> print(bst)
+        # 7
+        #   3
+        #     2
+        #     5
+        #   11
+        #     9
+        #     13
+        # <BLANKLINE>
+        # >>> bst.rotate_left()
+        # >>> print(bst)
+        # 11
+        #   7
+        #     3
+        #       2
+        #       5
+        #     9
+        #   13
+        # <BLANKLINE>
+        # >>> bst.rotate_left()
+        # >>> print(bst)
+        # 13
+        #   11
+        #     7
+        #       3
+        #         2
+        #         5
+        #       9
+        # <BLANKLINE>
         """
         # TODO: implement this method!
         pass
 
+    def closest(self, item) -> Optional[int]:
+
+        if self.is_empty():
+            return None
+        elif item == self._root:
+            return self._root
+        elif item < self._root:
+            left_closest = self._left.closest(item)
+
+            if left_closest is not None and item - left_closest <= self._root - item:
+                return left_closest
+            else:
+                return self._root
+
+        else:
+            right_closest = self._right.closest(item)
+
+            if right_closest is not None and right_closest - item < item - self._root:
+                return right_closest
+            else:
+                return self._root
 
 if __name__ == '__main__':
     import doctest
