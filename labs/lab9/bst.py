@@ -287,16 +287,18 @@ class BinarySearchTree:
 
         elif end >= self._root >= start:
             if self._left is not None:
-                items.extend(self._left.items_in_range())
+                items.extend(self._left.items_in_range(start, end))
 
             items.extend([self._root])
 
             if self._right is not None:
-                items.extend(self._right.items_in_range(item))
+                items.extend(self._right.items_in_range(start, end))
 
         else:
-            if start >= self._root or self._root >= end:
-                items.extend(self._left.items_in_range(item))
+            if start > self._root:
+                items.extend(self._right.items_in_range(start, end))
+            elif end < self._root:
+                items.extend(self._left.items_in_range(start, end))
 
         return items
 
@@ -318,8 +320,45 @@ class BinarySearchTree:
         3
         >>> bst._right._root
         20
+        >>> bst = BinarySearchTree(10)
+        >>> bst.insert(10)
+        >>> bst._root
+        10
+        >>> bst._left._root
+        10
+        >>> bst2 = BinarySearchTree(9)
+        >>> bst2._right = BinarySearchTree(10)
+        >>> bst = BinarySearchTree(7)
+        >>> bst3 = BinarySearchTree(6)
+        >>> bst3._left = BinarySearchTree(4)
+        >>> bst._left = bst3
+        >>> bst._right = bst2
+        >>> bst.insert(7)
+        >>> bst._left._right._root
+        7
         """
-        pass
+        if self.is_empty():
+            self._root = item
+            self._left = BinarySearchTree(None)
+            self._right = BinarySearchTree(None)
+        elif item == self._root:
+            # the new item can be the max of the left (or the min of the right.)
+            self._left.add_new_max(item)
+        elif item < self._root:
+            self._left.insert(item)
+        else:
+            self._right.insert(item)
+
+    def add_new_max(self, item: Any) -> None:
+        """Adds item in maximum position of left BST.
+        Assumes the left branch is passed as the argument self.
+        """
+        if self.is_empty():
+            self._root = item
+        elif self._right is None:
+            self._right = BinarySearchTree(item)
+        else:
+            self._right.add_new_max(item)
 
     # ------------------------------------------------------------------------
     # Task 4

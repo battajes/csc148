@@ -31,8 +31,20 @@ def insert_delete_all(n: int, sorted_: bool) -> None:
     Note: you'll need to first create your own BinarySearchTree here,
     and then call insert and delete on it.
     """
-    pass
+    subject = BinarySearchTree(None)
 
+    items = []
+    for i in range(n):
+        items.append(i)
+
+    if not sorted:
+        random.shuffle(items)
+
+    for i in range(n):
+        subject.insert(items[i])
+
+    for i in range(n):
+        subject.delete(items[i])
 
 # This is the main timing experiment. You don't need to change any of the code
 # below, although you can if you want to modify the experiment or plot the
