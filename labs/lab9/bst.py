@@ -398,80 +398,90 @@ class BinarySearchTree:
         <BLANKLINE>
         """
 
-        # # preserve left and right subtrees
-        # pivot_tree = self._left
-        # # right_tree = self._right
+        # if not self._left.is_empty():
         #
-        # # alias copy of original tree
-        # old_root_tree = self
-        # # remove left side
-        # old_root_tree._left = BinarySearchTree(None)
+        #     old_root = self._root
+        #     old_rtree = self._right
+        #     new_root_old_child = self._left._right
         #
-        # # preserve subtree that will need to be transferred
-        # # if not pivot_tree._right.is_empty():
-        # transfer_tree = pivot_tree._right
+        #     self._root = self._left._root
+        #     self._left = self._left._left
         #
-        # pivot_tree._right = old_root_tree
-        # pivot_tree._right._left = transfer_tree
-        #
-        # old_root_tree = pivot_tree
+        #     new_rtree = BinarySearchTree(old_root)
+        #     new_rtree._left = new_root_old_child
+        #     new_rtree._right = old_rtree
+        #     self._right = new_rtree
 
-        old_root = self._root
-        transfer_tree = self._left._right
-        transfer_tree2 = self._right
-        self._root = self._left._root
-        self._left = self._left._left
+        if not self._left.is_empty():
 
-        self._right._root = old_root
-        self._right._left = transfer_tree
-        self._right._right = BinarySearchTree(transfer_tree2)
+            old_root, old_rtree = self._root, self._right
 
+            inner_child = self._left._right
+
+            self._root, self._left = self._left._root, self._left._left
+
+            new_rtree = BinarySearchTree(old_root)
+
+            new_rtree._left, new_rtree._right = inner_child, old_rtree
+
+            self._right = new_rtree
 
     def rotate_left(self) -> None:
         """Rotate the BST counter-clockwise,
         i.e. make the right subtree the root.
 
-        # >>> bst = BinarySearchTree(7)
-        # >>> left = BinarySearchTree(3)
-        # >>> left._left = BinarySearchTree(2)
-        # >>> left._right = BinarySearchTree(5)
-        # >>> right = BinarySearchTree(11)
-        # >>> right._left = BinarySearchTree(9)
-        # >>> right._right = BinarySearchTree(13)
-        # >>> bst._left = left
-        # >>> bst._right = right
-        # >>> print(bst)
-        # 7
-        #   3
-        #     2
-        #     5
-        #   11
-        #     9
-        #     13
-        # <BLANKLINE>
-        # >>> bst.rotate_left()
-        # >>> print(bst)
-        # 11
-        #   7
-        #     3
-        #       2
-        #       5
-        #     9
-        #   13
-        # <BLANKLINE>
-        # >>> bst.rotate_left()
-        # >>> print(bst)
-        # 13
-        #   11
-        #     7
-        #       3
-        #         2
-        #         5
-        #       9
-        # <BLANKLINE>
+        >>> bst = BinarySearchTree(7)
+        >>> left = BinarySearchTree(3)
+        >>> left._left = BinarySearchTree(2)
+        >>> left._right = BinarySearchTree(5)
+        >>> right = BinarySearchTree(11)
+        >>> right._left = BinarySearchTree(9)
+        >>> right._right = BinarySearchTree(13)
+        >>> bst._left = left
+        >>> bst._right = right
+        >>> print(bst)
+        7
+          3
+            2
+            5
+          11
+            9
+            13
+        <BLANKLINE>
+        >>> bst.rotate_left()
+        >>> print(bst)
+        11
+          7
+            3
+              2
+              5
+            9
+          13
+        <BLANKLINE>
+        >>> bst.rotate_left()
+        >>> print(bst)
+        13
+          11
+            7
+              3
+                2
+                5
+              9
+        <BLANKLINE>
         """
-        # TODO: implement this method!
-        pass
+        if not self._right.is_empty():
+
+            old_root = self._root
+            old_ltree = self._left
+            new_root_old_child = self._right._left
+
+            self._root = self._right._root
+            self._right = self._right._right
+
+            new_ltree = BinarySearchTree(old_root)
+            new_ltree._right = new_root_old_child
+            new_ltree._left = old_ltree
+            self._left = new_ltree
 
     def closest(self, item) -> Optional[int]:
 
