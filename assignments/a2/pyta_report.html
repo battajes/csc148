@@ -533,7 +533,7 @@ footer {
     <body>
         <header>
             <h1 class="title">PyTA Error Report</h1>
-            <time>Tue. Nov. 13 2018, 04:07:36 PM</time>
+            <time>Fri. Nov. 16 2018, 11:35:21 PM</time>
         </header>
         <main>
             
@@ -565,9 +565,266 @@ footer {
                     </h3>
                     <div class="content collapsible">
                         
-                        <span class="empty-placeholder">None!
+                        <div class="error-instance">
 
-</span>
+                            <div class="info">
+                                <span class="error-link style-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;C0326" target="_blank">&#10064; C0326 (bad-whitespace)</a>
+                                </span>
+                                <span class="occurrences">
+                                3
+                                
+                                 occurrences.
+                                
+                                </span>
+                                <span class="shown">
+                                
+                                </span>
+                                <span class="slider">
+                                   <button> Expand/Collapse </button>
+                                </span>
+                            </div>
+
+                            <div class="message-container collapsible">
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 128] Exactly one space required around keyword argument assignment
+    def __init__(self, weight_type: str='sum') -> None:
+                                       ^
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">126</span>      <span class="grey"><span class="pygments-n">_weight_type</span><span class="pygments-p">:</span> <span class="pygments-nb">str</span></span>
+  <span class="grey line-num">127</span>  <span class="grey"></span>
+  <span class="gbold line-num">128</span>      <span class="black"><span class="pygments-k">def</span> <span class="pygments-fm">__init__</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">weight_type</span><span class="pygments-p">:</span> <span class="pygments-nb">str</span></span><span class="highlight-pyta"><span class="pygments-o">=</span></span><span class="black"><span class="pygments-s1">&#39;sum&#39;</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+  <span class="grey line-num">129</span>          <span class="grey"><span class="pygments-s2">&quot;&quot;&quot;Initialize an empty simple prefix tree.</span></span>
+  <span class="grey line-num">130</span>  <span class="grey"></span>
+</code>
+                                    
+                                </div>
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 316] Exactly one space required around keyword argument assignment
+    def add_new(self, value: Any, weight: float, prefix: List, count: int=1) -> None:
+                                                                         ^
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">314</span>              <span class="grey"><span class="pygments-c1">#         ...</span></span>
+  <span class="grey line-num">315</span>  <span class="grey"></span>
+  <span class="gbold line-num">316</span>      <span class="black"><span class="pygments-k">def</span> <span class="pygments-nf">add_new</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">value</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">,</span> <span class="pygments-n">weight</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">count</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span></span><span class="highlight-pyta"><span class="pygments-o">=</span></span><span class="black"><span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+  <span class="grey line-num">317</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">count</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
+  <span class="grey line-num">318</span>              <span class="grey"><span class="pygments-n">new_tree</span> <span class="pygments-o">=</span> <span class="pygments-n">SimplePrefixTree</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">_weight_type</span><span class="pygments-p">)</span></span>
+</code>
+                                    
+                                </div>
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 349] Exactly one space required around keyword argument assignment
+    def add_on(self, value: Any, weight: float, prefix: List, count: int=1) -> None:
+                                                                        ^
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">347</span>          <span class="grey"><span class="pygments-c1"># x.subtrees.append(x2)</span></span>
+  <span class="grey line-num">348</span>  <span class="grey"></span>
+  <span class="gbold line-num">349</span>      <span class="black"><span class="pygments-k">def</span> <span class="pygments-nf">add_on</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">value</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">,</span> <span class="pygments-n">weight</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">count</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span></span><span class="highlight-pyta"><span class="pygments-o">=</span></span><span class="black"><span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+  <span class="grey line-num">350</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">count</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
+  <span class="grey line-num">351</span>  <span class="grey"></span>
+</code>
+                                    
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                        
+                        <div class="error-instance">
+
+                            <div class="info">
+                                <span class="error-link style-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;C0301" target="_blank">&#10064; C0301 (line-too-long)</a>
+                                </span>
+                                <span class="occurrences">
+                                2
+                                
+                                 occurrences.
+                                
+                                </span>
+                                <span class="shown">
+                                
+                                </span>
+                                <span class="slider">
+                                   <button> Expand/Collapse </button>
+                                </span>
+                            </div>
+
+                            <div class="message-container collapsible">
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 316] Line too long (85/80)
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">314</span>              <span class="grey"><span class="pygments-c1">#         ...</span></span>
+  <span class="grey line-num">315</span>  <span class="grey"></span>
+  <span class="gbold line-num">316</span>      <span class="highlight-pyta"><span class="pygments-k">def</span> <span class="pygments-nf">add_new</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">value</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">,</span> <span class="pygments-n">weight</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">count</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span><span class="pygments-o">=</span><span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+  <span class="grey line-num">317</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">count</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
+  <span class="grey line-num">318</span>              <span class="grey"><span class="pygments-n">new_tree</span> <span class="pygments-o">=</span> <span class="pygments-n">SimplePrefixTree</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">_weight_type</span><span class="pygments-p">)</span></span>
+</code>
+                                    
+                                </div>
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 349] Line too long (84/80)
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">347</span>          <span class="grey"><span class="pygments-c1"># x.subtrees.append(x2)</span></span>
+  <span class="grey line-num">348</span>  <span class="grey"></span>
+  <span class="gbold line-num">349</span>      <span class="highlight-pyta"><span class="pygments-k">def</span> <span class="pygments-nf">add_on</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">value</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">,</span> <span class="pygments-n">weight</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">count</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span><span class="pygments-o">=</span><span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+  <span class="grey line-num">350</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">count</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
+  <span class="grey line-num">351</span>  <span class="grey"></span>
+</code>
+                                    
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                        
+                        <div class="error-instance">
+
+                            <div class="info">
+                                <span class="error-link style-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;C0111" target="_blank">&#10064; C0111 (missing-docstring)</a>
+                                </span>
+                                <span class="occurrences">
+                                3
+                                
+                                 occurrences.
+                                
+                                </span>
+                                <span class="shown">
+                                
+                                </span>
+                                <span class="slider">
+                                   <button> Expand/Collapse </button>
+                                </span>
+                            </div>
+
+                            <div class="message-container collapsible">
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 186] Missing method docstring
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">186</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">sub_vals</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-n">List</span><span class="pygments-p">:</span></span>
+     <span class="black line-num"></span>          <span class="highlight-pyta"><span class="pygments-sd">&quot;&quot;&quot;YOUR DOCSTRING HERE&quot;&quot;&quot;</span></span>
+  <span class="grey line-num">187</span>          <span class="grey"><span class="pygments-n">items</span> <span class="pygments-o">=</span> <span class="pygments-p">[]</span></span>
+  <span class="grey line-num">188</span>          <span class="grey"><span class="pygments-k">for</span> <span class="pygments-n">subtree</span> <span class="pygments-ow">in</span> <span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">subtrees</span><span class="pygments-p">:</span></span>
+</code>
+                                    
+                                </div>
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 316] Missing method docstring
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">316</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">add_new</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">value</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">,</span> <span class="pygments-n">weight</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">count</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span><span class="pygments-o">=</span><span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+     <span class="black line-num"></span>          <span class="highlight-pyta"><span class="pygments-sd">&quot;&quot;&quot;YOUR DOCSTRING HERE&quot;&quot;&quot;</span></span>
+  <span class="grey line-num">317</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">count</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
+  <span class="grey line-num">318</span>              <span class="grey"><span class="pygments-n">new_tree</span> <span class="pygments-o">=</span> <span class="pygments-n">SimplePrefixTree</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">_weight_type</span><span class="pygments-p">)</span></span>
+</code>
+                                    
+                                </div>
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 349] Missing method docstring
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">349</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">add_on</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">value</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">,</span> <span class="pygments-n">weight</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">count</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span><span class="pygments-o">=</span><span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
+     <span class="black line-num"></span>          <span class="highlight-pyta"><span class="pygments-sd">&quot;&quot;&quot;YOUR DOCSTRING HERE&quot;&quot;&quot;</span></span>
+  <span class="grey line-num">350</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">count</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
+  <span class="grey line-num">351</span>  <span class="grey"></span>
+</code>
+                                    
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                        
+                        <div class="error-instance">
+
+                            <div class="info">
+                                <span class="error-link style-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;R0201" target="_blank">&#10064; R0201 (no-self-use)</a>
+                                </span>
+                                <span class="occurrences">
+                                1
+                                
+                                 occurrence.
+                                
+                                </span>
+                                <span class="shown">
+                                
+                                </span>
+                                <span class="slider">
+                                   <button> Expand/Collapse </button>
+                                </span>
+                            </div>
+
+                            <div class="message-container collapsible">
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 192] Method could be a function
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">190</span>          <span class="grey"><span class="pygments-k">return</span> <span class="pygments-n">items</span></span>
+  <span class="grey line-num">191</span>  <span class="grey"></span>
+  <span class="gbold line-num">192</span>      <span class="black"></span><span class="highlight-pyta"><span class="pygments-k">def</span> <span class="pygments-nf">binary_search</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">l</span><span class="pygments-p">:</span> <span class="pygments-nb">list</span><span class="pygments-p">,</span> <span class="pygments-n">v</span><span class="pygments-p">:</span> <span class="pygments-n">Any</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-nb">int</span><span class="pygments-p">:</span></span>
+  <span class="gbold line-num">193</span>          <span class="highlight-pyta"><span class="pygments-s2">&quot;&quot;&quot; Return the index of the first occurrence of v in L, or return -1</span></span>
+  <span class="gbold line-num">194</span>          <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-n">v</span> <span class="pygments-ow">is</span> <span class="pygments-ow">not</span> <span class="pygments-ow">in</span> <span class="pygments-n">L</span><span class="pygments-o">.</span></span>
+  <span class="gbold line-num">195</span>  <span class="highlight-pyta"></span>
+  <span class="gbold line-num">196</span>          <span class="highlight-pyta"><span class="pygments-n">Precondition</span><span class="pygments-p">:</span> <span class="pygments-n">L</span> <span class="pygments-ow">is</span> <span class="pygments-nb">sorted</span> <span class="pygments-kn">from</span> <span class="pygments-nn">smallest</span> <span class="pygments-nn">to</span> <span class="pygments-nn">largest</span> <span class="pygments-nn">and</span> <span class="pygments-nn">all</span> <span class="pygments-nn">the</span> <span class="pygments-nn">items</span></span>
+  <span class="gbold line-num">197</span>          <span class="highlight-pyta"><span class="pygments-ow">in</span> <span class="pygments-n">L</span> <span class="pygments-n">can</span> <span class="pygments-n">be</span> <span class="pygments-n">compared</span> <span class="pygments-n">to</span> <span class="pygments-n">v</span><span class="pygments-o">.</span></span>
+  <span class="gbold line-num">198</span>  <span class="highlight-pyta"></span>
+  <span class="gbold line-num">199</span>          <span class="highlight-pyta"><span class="pygments-o">&gt;&gt;&gt;</span> <span class="pygments-n">binary_search</span><span class="pygments-p">([</span><span class="pygments-mi">2</span><span class="pygments-p">,</span> <span class="pygments-mi">3</span><span class="pygments-p">,</span> <span class="pygments-mi">5</span><span class="pygments-p">,</span> <span class="pygments-mi">7</span><span class="pygments-p">],</span> <span class="pygments-mi">2</span><span class="pygments-p">)</span></span>
+  <span class="gbold line-num">200</span>          <span class="highlight-pyta"><span class="pygments-mi">0</span></span>
+  <span class="gbold line-num">201</span>          <span class="highlight-pyta"><span class="pygments-o">&gt;&gt;&gt;</span> <span class="pygments-n">binary_search</span><span class="pygments-p">([</span><span class="pygments-mi">2</span><span class="pygments-p">,</span> <span class="pygments-mi">3</span><span class="pygments-p">,</span> <span class="pygments-mi">5</span><span class="pygments-p">,</span> <span class="pygments-mi">5</span><span class="pygments-p">],</span> <span class="pygments-mi">5</span><span class="pygments-p">)</span></span>
+  <span class="gbold line-num">202</span>          <span class="highlight-pyta"><span class="pygments-mi">2</span></span>
+  <span class="gbold line-num">203</span>          <span class="highlight-pyta"><span class="pygments-o">&gt;&gt;&gt;</span> <span class="pygments-n">binary_search</span><span class="pygments-p">([</span><span class="pygments-mi">2</span><span class="pygments-p">,</span> <span class="pygments-mi">3</span><span class="pygments-p">,</span> <span class="pygments-mi">5</span><span class="pygments-p">,</span> <span class="pygments-mi">7</span><span class="pygments-p">],</span> <span class="pygments-mi">8</span><span class="pygments-p">)</span></span>
+  <span class="gbold line-num">204</span>          <span class="highlight-pyta"><span class="pygments-o">-</span><span class="pygments-mi">1</span></span>
+  <span class="gbold line-num">205</span>          <span class="highlight-pyta"><span class="pygments-s2">&quot;&quot;&quot;</span></span>
+  <span class="gbold line-num">206</span>  <span class="highlight-pyta"></span>
+  <span class="gbold line-num">207</span>          <span class="highlight-pyta"><span class="pygments-n">b</span> <span class="pygments-o">=</span> <span class="pygments-mi">0</span></span>
+  <span class="gbold line-num">208</span>          <span class="highlight-pyta"><span class="pygments-n">e</span> <span class="pygments-o">=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">l</span><span class="pygments-p">)</span> <span class="pygments-o">-</span> <span class="pygments-mi">1</span></span>
+  <span class="gbold line-num">209</span>  <span class="highlight-pyta"></span>
+  <span class="gbold line-num">210</span>          <span class="highlight-pyta"><span class="pygments-k">while</span> <span class="pygments-n">b</span> <span class="pygments-o">&lt;=</span> <span class="pygments-n">e</span><span class="pygments-p">:</span></span>
+  <span class="gbold line-num">211</span>              <span class="highlight-pyta"><span class="pygments-n">m</span> <span class="pygments-o">=</span> <span class="pygments-p">(</span><span class="pygments-n">b</span> <span class="pygments-o">+</span> <span class="pygments-n">e</span><span class="pygments-p">)</span> <span class="pygments-o">//</span> <span class="pygments-mi">2</span></span>
+  <span class="gbold line-num">212</span>              <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-n">l</span><span class="pygments-p">[</span><span class="pygments-n">m</span><span class="pygments-p">]</span> <span class="pygments-o">&lt;</span> <span class="pygments-n">v</span><span class="pygments-p">:</span></span>
+  <span class="gbold line-num">213</span>                  <span class="highlight-pyta"><span class="pygments-n">b</span> <span class="pygments-o">=</span> <span class="pygments-n">m</span> <span class="pygments-o">+</span> <span class="pygments-mi">1</span></span>
+  <span class="gbold line-num">214</span>              <span class="highlight-pyta"><span class="pygments-k">else</span><span class="pygments-p">:</span></span>
+  <span class="gbold line-num">215</span>                  <span class="highlight-pyta"><span class="pygments-n">e</span> <span class="pygments-o">=</span> <span class="pygments-n">m</span> <span class="pygments-o">-</span> <span class="pygments-mi">1</span></span>
+  <span class="gbold line-num">216</span>  <span class="highlight-pyta"></span>
+  <span class="gbold line-num">217</span>          <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-n">b</span> <span class="pygments-o">==</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">l</span><span class="pygments-p">)</span> <span class="pygments-ow">or</span> <span class="pygments-n">l</span><span class="pygments-p">[</span><span class="pygments-n">b</span><span class="pygments-p">]</span> <span class="pygments-o">!=</span> <span class="pygments-mi">1</span><span class="pygments-p">:</span></span>
+  <span class="gbold line-num">218</span>              <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-o">-</span><span class="pygments-mi">1</span></span>
+  <span class="gbold line-num">219</span>          <span class="highlight-pyta"><span class="pygments-k">else</span><span class="pygments-p">:</span></span>
+  <span class="gbold line-num">220</span>              <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-n">b</span></span>
+  <span class="grey line-num">221</span>  <span class="grey"></span>
+  <span class="grey line-num">222</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-fm">__len__</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-nb">int</span><span class="pygments-p">:</span></span>
+</code>
+                                    
+                                </div>
+                                
+                            </div>
+
+                        </div>
                         
                     </div>
                 </article>

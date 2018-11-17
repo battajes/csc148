@@ -125,7 +125,7 @@ class SimplePrefixTree(Autocompleter):
     subtrees: List[SimplePrefixTree]
     _weight_type: str
 
-    def __init__(self, weight_type: str) -> None:
+    def __init__(self, weight_type: str ='sum') -> None:
         """Initialize an empty simple prefix tree.
 
         Precondition: weight_type == 'sum' or weight_type == 'average'.
@@ -183,6 +183,12 @@ class SimplePrefixTree(Autocompleter):
                 index += 1
         return contains
 
+    def sub_vals(self) -> List:
+        items = []
+        for subtree in self.subtrees:
+            items.append(subtree.value)
+        return items
+
     def __len__(self) -> int:
         """Return the number of values stored in this Autocompleter.
 
@@ -202,27 +208,27 @@ class SimplePrefixTree(Autocompleter):
                 size += subtree.__len__()  # could also do len(subtree) here
             return size
 
-    def add_new(self, value: Any, weight: float, prefix: List)-> None:
-        """Insert a given value to new SimplePrefixTree
-
-        - (EMPTY TREE):
-        If self.weight == 0, then self.value == [] and self.subtrees == [].
-        This represents an empty simple prefix tree.
-
-        """
-
-        prefix = ['a', 'b']
-        weight = 1.5
-        value = 'ab'
-
-        self.subtrees.append(prefix[0])
-        new = SimplePrefixTree('Sum')
-
-        # if prefix == []:
-        #     self.value = []
-
-        for i in range(len(prefix)):
-            pass
+    # def add_new(self, value: Any, weight: float, prefix: List)-> None:
+    #     """Insert a given value to new SimplePrefixTree
+    #
+    #     - (EMPTY TREE):
+    #     If self.weight == 0, then self.value == [] and self.subtrees == [].
+    #     This represents an empty simple prefix tree.
+    #
+    #     """
+    #
+    #     prefix = ['a', 'b']
+    #     weight = 1.5
+    #     value = 'ab'
+    #
+    #     self.subtrees.append(prefix[0])
+    #     new = SimplePrefixTree('Sum')
+    #
+    #     # if prefix == []:
+    #     #     self.value = []
+    #
+    #     for i in range(len(prefix)):
+    #         pass
 
     def insert(self, value: Any, weight: float, prefix: List) -> None:
         """Insert the given value into this Autocompleter.
@@ -242,17 +248,17 @@ class SimplePrefixTree(Autocompleter):
         """
 
         if self.is_empty():
-            for i in range(len(prefix)):
-                self.subtrees
-
-
+            # self._add_new()
+            pass
+        elif not self.__contains__(value):
+            # value is new, and new prefix tree will be added in right place
+            # add to existing, add_on()
+            pass
         else:
-            # check if value has already been inserted.
+            # value already exists in tree
+            # *merge* with existing weight (depending on weight_type)
+            pass
 
-            # if already inserted then the given weight should be
-            # *merged* with existing weight (depending on weight_type)
-
-            # if new, add to appropriate location.
 
             # template:
             # def __len__(self):
@@ -276,6 +282,69 @@ class SimplePrefixTree(Autocompleter):
             #             ...
             #             subtree.f()...
             #         ...
+
+    def add_new(self, value: Any, weight: float, prefix: List, count: int=1) -> None:
+        if count <= len(prefix):
+            new_tree = SimplePrefixTree(self._weight_type)
+            new_tree.value = prefix[:count]
+            new_tree.weight = weight
+
+            self.subtrees.append(new_tree)
+            self.subtrees[-1].add_new(value, weight, prefix, count + 1)
+
+            if count == 1:
+                self.weight += weight
+            elif count == len(prefix):
+                last_tree = SimplePrefixTree(self._weight_type)
+                last_tree.value = value
+                last_tree.weight = weight
+                self.subtrees[-1].subtrees.append(last_tree)
+
+        # x = SimplePrefixTree(self._weight_type)
+        # # exercise with [1 , 2, 3]
+        # prefix = [1, 2, 3]
+        # x2 = SimplePrefixTree(self._weight_type)
+        # x2.value = prefix[:1]
+        #
+        # x3 = SimplePrefixTree(self._weight_type)
+        # x3.value = prefix[:2]
+        #
+        # x4 = SimplePrefixTree(self._weight_type)
+        # x4.value = prefix[:3]
+        #
+        # x3.subtrees.append(x4)
+        # x2.subtrees.append(x3)
+        # x.subtrees.append(x2)
+
+    def add_on(self, value: Any, weight: float, prefix: List, count: int=1) -> None:
+        if count <= len(prefix):
+
+            # if prefix[:count] in self.subtrees:
+            i = binary_search(self.sub_vals(), prefix[:count])
+            if i < 0:
+
+                new_tree = SimplePrefixTree(self._weight_type)
+                new_tree.value = prefix[:count]
+                new_tree.weight = weight
+
+                self.subtrees.append(new_tree)
+
+                self.subtrees[-1].add_new(value, weight, prefix, count + 1)
+
+                if count == 1:
+                    self.weight += weight
+                elif count == len(prefix):
+                    last_tree = SimplePrefixTree(self._weight_type)
+                    last_tree.value = value
+                    last_tree.weight = weight
+                    self.subtrees[-1].subtrees.append(last_tree)
+            else:
+                if count == len(prefix):
+                    # then we are at last prefix before value. Just have to
+                    # check if the value is here somehow
+                else:
+                    self.subtrees[i].add_on(value, weight, prefix, count + 1)
+
 
     def autocomplete(self, prefix: List,
                      limit: Optional[int] = None) -> List[Tuple[Any, float]]:
@@ -376,6 +445,35 @@ class CompressedPrefixTree(Autocompleter):
         """
         raise NotImplementedError
 
+def binary_search(l: list, v: Any) -> int:
+    """ Return the index of the first occurrence of v in L, or return -1
+    if v is not in L.
+
+    Precondition: L is sorted from smallest to largest and all the items
+    in L can be compared to v.
+
+    >>> binary_search([2, 3, 5, 7], 2)
+    0
+    >>> binary_search([2, 3, 5, 5], 5)
+    2
+    >>> binary_search([2, 3, 5, 7], 8)
+    -1
+    """
+
+    b = 0
+    e = len(l) - 1
+
+    while b <= e:
+        m = (b + e) // 2
+        if l[m] < v:
+            b = m + 1
+        else:
+            e = m - 1
+
+    if b == len(l) or l[b] != 1:
+        return -1
+    else:
+        return b
 
 if __name__ == '__main__':
     import python_ta
