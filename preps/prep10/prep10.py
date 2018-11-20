@@ -214,16 +214,13 @@ class BoolOp(Expr):
         in Python, it's actually valid to pass integers to 'and' and 'or'
         (although generally we don't do this in CSC148).
 
-        >>> expr = BoolOp('and', [Bool(True), Bool(True), Bool(False)])
-        >>> expr.evaluate()
-        False
-        >>> expr = BoolOp('or', [Bool(True), Bool(True), Bool(False)])
-        >>> expr.evaluate()
-        True
-        >>> expr = BoolOp('==', [Bool(True), Bool(True), Bool(False)])
-        >>> expr.evaluate()
-        False
-        >>> expr = BoolOp('!=', [Bool(True), Bool(True), Bool(False)])
+        # >>> expr = BoolOp('and', [Bool(True), Bool(True), Bool(False)])
+        # >>> expr.evaluate()
+        # False
+        # >>> expr = BoolOp('or', [Bool(True), Bool(True), Bool(False)])
+        # >>> expr.evaluate()
+        # True
+        >>> expr = BoolOp('and', [Bool(False), Bool(True)])
         >>> expr.evaluate()
         False
         """
@@ -231,35 +228,22 @@ class BoolOp(Expr):
         if self.op == 'and':
             for i in range(1, len(self.values)):
                 if i == 1:
-                    results.append(self.values[i-1] and self.values[i])
+                    results.append(self.values[i-1].evaluate() and
+                                   self.values[i].evaluate())
                 else:
-                    results.append(results[i-2] and self.values[i])
-            return results[-1].evaluate()
+                    results.append(results[i-2] and
+                                   self.values[i].evaluate())
 
         elif self.op == 'or':
             for i in range(1, len(self.values)):
                 if i == 1:
-                    results.append(self.values[i - 1] or self.values[i])
+                    results.append(self.values[i - 1].evaluate() or
+                                   self.values[i].evaluate())
                 else:
-                    results.append(results[i - 2] or self.values[i])
-            return results[-1].evaluate()
+                    results.append(results[i - 2] or
+                                   self.values[i].evaluate())
 
-        elif self.op == '==':
-            for i in range(1, len(self.values)):
-                if i == 1:
-                    results.append(self.values[i - 1] == self.values[i])
-                else:
-                    results.append(results[i - 2] == self.values[i])
-            return results[-1].evaluate()
-
-        elif self.op == '!=':
-            for i in range(1, len(self.values)):
-                if i == 1:
-                    results.append(self.values[i - 1] != self.values[i])
-                else:
-                    results.append(results[i - 2] != self.values[i])
-            return results[-1].evaluate()
-
+        return results[-1]
 
     def __str__(self) -> str:
         """Return a string representation of this boolean expression.
@@ -321,7 +305,25 @@ class Compare(Expr):
         >>> expr.evaluate()
         True
         """
-        pass
+        result = True
+        for i in range(len(self.comparisons)):
+            if self.comparisons[i][0] == '<=' and i == 0:
+                if not (self.left.evaluate() <=
+                        self.comparisons[i][1].evaluate()):
+                    return False
+            elif self.comparisons[i][0] == '<=':
+                if not (self.comparisons[i-1][1].evaluate() <=
+                        self.comparisons[i][1].evaluate()):
+                    return False
+            elif self.comparisons[i][0] == '<' and i == 0:
+                if not (self.left.evaluate() <
+                        self.comparisons[i][1].evaluate()):
+                    return False
+            elif self.comparisons[i][0] == '<':
+                if not (self.comparisons[i-1][1].evaluate() <
+                        self.comparisons[i][1].evaluate()):
+                    return False
+        return result
 
     def __str__(self) -> str:
         """Return a string representation of this comparison expression.

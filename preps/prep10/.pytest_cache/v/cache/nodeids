@@ -1,0 +1,4 @@
+[
+  "prep10_sample_test.py::test_compare_evaluate",
+  "prep10_sample_test.py::test_bool_op_evaluate"
+]

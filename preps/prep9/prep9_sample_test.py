@@ -1,7 +1,7 @@
-"""CSC148 Prep 9: Binary Search Trees
+"""CSC148 Prep 10: Expression Trees
 """
 
-from prep9 import BinarySearchTree
+from prep10 import BinarySearchTree
 
 
 def test_maximum() -> None:
@@ -121,4 +121,4 @@ def test_smaller() -> None:
 
 if __name__ == '__main__':
     import pytest
-    pytest.main(['prep9_sample_test.py'])
+    pytest.main(['prep10_sample_test.py'])
