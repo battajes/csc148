@@ -183,7 +183,7 @@ class SimplePrefixTree(Autocompleter):
                 index += 1
         return contains
 
-    def sub_vals(self) -> List:
+    def subtree_vals(self) -> List:
         items = []
         for subtree in self.subtrees:
             items.append(subtree.value)
@@ -248,29 +248,15 @@ class SimplePrefixTree(Autocompleter):
         """
 
         if self.is_empty():
-            # self._add_new()
-            pass
-        elif not self.__contains__(value):
-            # value is new, and new prefix tree will be added in right place
-            # add to existing, add_on()
-            pass
+            self.add_nw(value, weight, prefix)
+        # elif self.subtrees == []:
+        #     pass
         else:
             # value already exists in tree
             # *merge* with existing weight (depending on weight_type)
-            pass
+            self.add_on(value, weight, prefix)
 
-
-            # template:
-            # def __len__(self):
-            #     if self.is_empty():  # tree is empty
-            #         return 0
-            #     elif self._subtrees == []:  # tree is a single item
-            #         return 1
-            #     else:  # tree has at least one subtree
-            #         size = 1  # count the root
-            #         for subtree in self._subtrees:
-            #             size += subtree.__len__()
-            #         return size
+            # tree recursion template:
             # def f(self) -> ...:
             #     if self.is_empty():  # tree is empty
             #         ...
@@ -283,68 +269,78 @@ class SimplePrefixTree(Autocompleter):
             #             subtree.f()...
             #         ...
 
-    def add_new(self, value: Any, weight: float, prefix: List, count: int=1) -> None:
-        if count <= len(prefix):
+    def add_nw(self, value: Any, weight: float, prefix: List, c: int=1) -> None:
+        if c <= len(prefix):
             new_tree = SimplePrefixTree(self._weight_type)
-            new_tree.value = prefix[:count]
+            new_tree.value = prefix[:c]
             new_tree.weight = weight
 
             self.subtrees.append(new_tree)
-            self.subtrees[-1].add_new(value, weight, prefix, count + 1)
+            self.subtrees[-1].add_nw(value, weight, prefix, c + 1)
 
-            if count == 1:
+            if c == 1:
                 self.weight += weight
-            elif count == len(prefix):
-                last_tree = SimplePrefixTree(self._weight_type)
-                last_tree.value = value
-                last_tree.weight = weight
-                self.subtrees[-1].subtrees.append(last_tree)
+            elif c == len(prefix):
+                self.add_leaf(value, weight, -1, -1)
+                # last_tree = SimplePrefixTree(self._weight_type)
+                # last_tree.value = value
+                # last_tree.weight = weight
+                # self.subtrees[-1].subtrees.append(last_tree)
 
-        # x = SimplePrefixTree(self._weight_type)
-        # # exercise with [1 , 2, 3]
-        # prefix = [1, 2, 3]
-        # x2 = SimplePrefixTree(self._weight_type)
-        # x2.value = prefix[:1]
-        #
-        # x3 = SimplePrefixTree(self._weight_type)
-        # x3.value = prefix[:2]
-        #
-        # x4 = SimplePrefixTree(self._weight_type)
-        # x4.value = prefix[:3]
-        #
-        # x3.subtrees.append(x4)
-        # x2.subtrees.append(x3)
-        # x.subtrees.append(x2)
+    def add_leaf(self, value: Any, weight: float, i: int, j: int)-> None:
+        last_tree = SimplePrefixTree(self._weight_type)
+        last_tree.value = value
+        last_tree.weight = weight
+        # self.subtrees[-1].subtrees.append(last_tree)
+        self.subtrees[i].subtrees.insert(j, last_tree)
 
-    def add_on(self, value: Any, weight: float, prefix: List, count: int=1) -> None:
-        if count <= len(prefix):
+    def add_on(self, value: Any, weight: float, prefix: List, c: int=1) -> None:
 
-            # if prefix[:count] in self.subtrees:
-            i = binary_search(self.sub_vals(), prefix[:count])
-            if i < 0:
+        if c <= len(prefix):
 
-                new_tree = SimplePrefixTree(self._weight_type)
-                new_tree.value = prefix[:count]
-                new_tree.weight = weight
+            # if prefix[:c] in self.subtrees:
+            # replace with a binary search
+            try:
+                i = self.subtree_vals().index(prefix[:c])
+            except ValueError:
+                i = -1
 
-                self.subtrees.append(new_tree)
-
-                self.subtrees[-1].add_new(value, weight, prefix, count + 1)
-
-                if count == 1:
+            if i >= 0:
+                if c == 1:
+                    # add weight to root since new prefix matches deeper prefix.
                     self.weight += weight
-                elif count == len(prefix):
-                    last_tree = SimplePrefixTree(self._weight_type)
-                    last_tree.value = value
-                    last_tree.weight = weight
-                    self.subtrees[-1].subtrees.append(last_tree)
-            else:
-                if count == len(prefix):
+
+                if c == len(prefix):
+                    # this case is not used if tree contains ('ab', ['a', 'b']
+                    # and ('abc', ['a','b','c'] is added.
                     # then we are at last prefix before value. Just have to
                     # check if the value is here somehow
-                else:
-                    self.subtrees[i].add_on(value, weight, prefix, count + 1)
+                    # j = binary_search(self.subtree_vals(), prefix[:c])
+                    try:
+                        j = self.subtrees[i].subtree_vals().index(value)
+                    except ValueError:
+                        j = -1
 
+                    if j < 0:
+                        self.add_leaf(value, weight, i, 0)
+                    else:
+                        self.subtrees[i].subtrees[j].weight += weight
+
+                    self.subtrees[i].weight += weight
+
+                    # add_leaf inserts at front of list, assuming that this case
+                    # occurs when existing prefix tree is longer than prefix
+                    # chain being added. Thus, value being inserted will be
+                    # shorter than the next prefix, and therefore less.
+                    # self.subtrees[i].subtrees.insert(0, last_tree)
+                else:
+                    # add weight to subtree since its prefix matches new prefix.
+                    self.subtrees[i].weight += weight
+                    self.subtrees[i].add_on(value, weight, prefix, c + 1)
+            else:
+                # Missing functionality to place new tree in right place.
+                # For now puts new tree at end of subtree list.
+                self.add_nw(value, weight, prefix, c)
 
     def autocomplete(self, prefix: List,
                      limit: Optional[int] = None) -> List[Tuple[Any, float]]:
@@ -455,9 +451,9 @@ def binary_search(l: list, v: Any) -> int:
     >>> binary_search([2, 3, 5, 7], 2)
     0
     >>> binary_search([2, 3, 5, 5], 5)
-    2
-    >>> binary_search([2, 3, 5, 7], 8)
-    -1
+    25
+    >>> binary_search(['a', 'b', 'c'], 'b')
+    1
     """
 
     b = 0
@@ -475,8 +471,17 @@ def binary_search(l: list, v: Any) -> int:
     else:
         return b
 
+
 if __name__ == '__main__':
-    import python_ta
-    python_ta.check_all(config={
-        'max-nested-blocks': 4
-    })
+
+    # import python_ta
+    # python_ta.check_all(config={
+    #     'max-nested-blocks': 4
+    # })
+
+    x = SimplePrefixTree()
+    x.add_nw('abc', 0.5, ['a', 'b', 'c'])
+    print(str(x))
+
+    x.add_on('ab', 0.2, ['a', 'b'])
+    print(str(x))
