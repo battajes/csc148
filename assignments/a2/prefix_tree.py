@@ -275,17 +275,59 @@ class SimplePrefixTree(Autocompleter):
             new_tree.value = prefix[:c]
             new_tree.weight = weight
 
-            self.subtrees.append(new_tree)
-            self.subtrees[-1].add_nw(value, weight, prefix, c + 1)
+            # need to find proper location here relative to values in list.
+            # if list is empty, append.
+            # if not insert appropriately.
+            if self.subtrees == []:
+                i = -1
+                self.subtrees.append(new_tree)
+                self.subtrees[i].add_nw(value, weight, prefix, c + 1)
+            else:
+                i = self.find_place(prefix, weight)
+                self.subtrees.insert(i, new_tree)
+                self.subtrees[i].add_nw(value, weight, prefix, c + 1)
 
             if c == 1:
                 self.weight += weight
             elif c == len(prefix):
-                self.add_leaf(value, weight, -1, -1)
+                #instead of first -1 use i value found from find_place()
+
+                self.add_leaf(value, weight, i, -1)
                 # last_tree = SimplePrefixTree(self._weight_type)
                 # last_tree.value = value
                 # last_tree.weight = weight
                 # self.subtrees[-1].subtrees.append(last_tree)
+
+    def find_place(self, prefix: Any, weight: float)-> int:
+        # assumes that the prefix will not equal another prefix already in list.
+        # this is called from add_nw(), called from add_on, which prevents this
+        # case.
+
+        place = 0
+        i = 0
+        values = self.subtree_vals()
+        if isinstance(values[0], str):
+            place += 1
+            i += 1
+            if len(values) == 1:
+                pass
+            else:
+                if prefix < values[i]:
+                    pass
+                else:
+                    while i < len(values):
+                        if values[i] < prefix:
+                            place += 1
+                        i += 1
+        else:
+            if prefix < values[i]:
+                pass
+            else:
+                while i < len(values):
+                    if values[i] < prefix:
+                        place += 1
+                    i += 1
+        return place
 
     def add_leaf(self, value: Any, weight: float, i: int, j: int)-> None:
         last_tree = SimplePrefixTree(self._weight_type)
@@ -480,8 +522,19 @@ if __name__ == '__main__':
     # })
 
     x = SimplePrefixTree()
-    x.add_nw('abc', 0.5, ['a', 'b', 'c'])
+    x.add_nw('abc', 0.1, ['a', 'b', 'c'])
     print(str(x))
 
-    x.add_on('ab', 0.2, ['a', 'b'])
+    x.add_on('abb', 0.2, ['a', 'b', 'b'])
+
+    x.add_on('abd', 0.3, ['a', 'b', 'd'])
+
+    x.add_on('aba', 0.4, ['a', 'b', 'a'])
+
+    x.add_on('car', .05, ['c', 'a', 'r'])
+
+    print(str(x))
+
+    x.add_on('card', 0.1, ['c', 'a', 'r', 'd'])
+
     print(str(x))
