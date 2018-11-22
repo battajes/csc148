@@ -115,6 +115,39 @@ def test_add_on()-> None:
     assert y.subtrees[0].subtrees[0].subtrees[1].subtrees[0].value == 'abc'
     assert y.subtrees[0].subtrees[0].subtrees[1].subtrees[0].weight == 0.2
 
+def test_insert():
+    # Inserting one value with an empty prefix [] into a new prefix tree should
+    # result in a tree with two nodes: an internal node with an empty prefix [],
+    # and then a leaf containing the inserted value. Note that __len__ should
+    # return 1 in this case, since we only count inserted values for the
+    # Autocompleter ADT.
+
+    s = SimplePrefixTree()
+    s.insert('a', 0.1, [])
+    assert str(s) == '[] (0.1)\n  a (0.1)\n'
+    assert len(s) == 1
+
+    # Inserting one value with a length-one prefix [x] into a new prefix tree
+    # should result in a tree with three node: two internal nodes with prefixes
+    # [] and [x], and then a leaf containing the inserted value.
+
+    s = SimplePrefixTree()
+    s.insert('a', 0.1, ['a'])
+    assert str(s) == "[] (0.1)\n  ['a'] (0.1)\n    a (0.1)\n"
+    assert len(s) == 1
+
+    # Inserting one value with a length-n prefix [x_1, ..., x_n] into a new
+    # prefix tree should result in a tree with (n+2) nodes: internal nodes with
+    # prefixes [], [x_1], [x_1, x_2], etc., and then a leaf containing the
+    # inserted value.
+
+    s = SimplePrefixTree()
+    prefix = ['a','b','c']
+    s.insert('a', 0.1, prefix)
+    assert len(s) == 1
+    assert s.subtrees[0].subtrees[0].subtrees[0].subtrees[0].value == 'a'
+    # shows 5 nodes, len prefix plus 2
+
 if __name__ == '__main__':
     import pytest
     pytest.main(['a2_test.py'])
