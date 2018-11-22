@@ -93,6 +93,13 @@ class SimplePrefixTree(Autocompleter):
         of the leaf weights in this tree.
     subtrees:
         A list of subtrees of this prefix tree.
+    _weight_type:
+        A str describing the method used to aggregate weights of nodes in
+        the given tree.
+    num_leaves:
+        An int recording the number of leaves in the given tree. This saves time
+        counting leaves using len() each time an average weight needs to be
+        calculated.
 
     === Representation invariants ===
     - self.weight >= 0
@@ -124,8 +131,9 @@ class SimplePrefixTree(Autocompleter):
     weight: float
     subtrees: List[SimplePrefixTree]
     _weight_type: str
+    num_leaves: int
 
-    def __init__(self, weight_type: str ='average') -> None:
+    def __init__(self, weight_type: str = 'average') -> None:
         """Initialize an empty simple prefix tree.
 
         Precondition: weight_type == 'sum' or weight_type == 'average'.
@@ -170,7 +178,7 @@ class SimplePrefixTree(Autocompleter):
 
     def __contains__(self, prefix: List[Any])-> bool:
         """ Returns True if the SimplePrefixTree contains the given item.
-
+        Incomplete implementation, as this may not be necessary for the project.
         """
         if self.is_empty():
             return False
@@ -185,12 +193,16 @@ class SimplePrefixTree(Autocompleter):
         return contains
 
     def subtree_vals(self) -> List:
+        """ Returns a list of values of the trees in the list self.subtrees.
+                """
         items = []
         for subtree in self.subtrees:
             items.append(subtree.value)
         return items
 
     def get_weights(self) -> List:
+        """ Returns a list of weights of the trees in the list self.subtrees.
+        """
         items = []
         for subtree in self.subtrees:
             items.append(subtree.weight)
@@ -233,11 +245,19 @@ class SimplePrefixTree(Autocompleter):
         """
 
         if self.is_empty():
-            self.add_nw(value, weight, prefix)
+            self.add(value, weight, prefix)
         else:
             self.add_on(value, weight, prefix)
 
-    def add_nw(self, value: Any, weight: float, prefix: List, c: int=1) -> None:
+    def add(self, value: Any, weight: float, prefix: List, c: int = 1) -> None:
+        """ Adds new internal nodes to a SimplePrefixTree that is empty, or
+        that does not already contain these nodes.
+
+        === Representation Invariants ===
+        - the nodes to be created do not exist in the SimplePrefixTree
+
+        """
+
         if c <= len(prefix):
             new_tree = SimplePrefixTree(self._weight_type)
             new_tree.value = prefix[:c]
@@ -251,11 +271,11 @@ class SimplePrefixTree(Autocompleter):
             if self.subtrees == []:
                 i = -1
                 self.subtrees.append(new_tree)
-                self.subtrees[i].add_nw(value, weight, prefix, c + 1)
+                self.subtrees[i].add(value, weight, prefix, c + 1)
             else:
-                i = self.find_place(prefix, weight)
+                i = self.find_place(weight)
                 self.subtrees.insert(i, new_tree)
-                self.subtrees[i].add_nw(value, weight, prefix, c + 1)
+                self.subtrees[i].add(value, weight, prefix, c + 1)
 
             if c == 1:
                 # didn't assign these on the way in, so do it on the way out.
@@ -274,12 +294,16 @@ class SimplePrefixTree(Autocompleter):
             self.weight = weight
             self.num_leaves += 1
 
-    def find_place(self, prefix: Any, weight: float)-> int:
-        # assumes that the prefix will not equal another prefix already in list.
-        # this is called from add_nw(), called from add_on, which prevents this
-        # case.
+    def find_place(self, weight: float)-> int:
+        """ Returns the index where the next given value should be inserted in
+        a list of subtrees.  Finds the index so that after insertion the list
+         will remain sorted by weight in non-increasing order.
 
-        # Nov 22 changed this from sorting alphabetically to by weight
+         === Representation Invariant ===
+         - assumes the subtree list is already sorted by weight in
+         non-increasing order.
+
+         """
 
         place = 0
         i = 0
@@ -305,7 +329,7 @@ class SimplePrefixTree(Autocompleter):
         last_tree.weight = weight
         self.subtrees[i].subtrees.insert(j, last_tree)
 
-    def agg_weight(self, weight):
+    def agg_weight(self, weight: int) -> None:
         """ Aggregate new weight with self.weight.
             Sum or average, depending on weight type of self.
         """
@@ -316,9 +340,11 @@ class SimplePrefixTree(Autocompleter):
                           (self.num_leaves + 1)
         self.num_leaves += 1
 
-    def add_on(self, value: Any, weight: float, prefix: List, c: int=1) -> None:
+    def add_on(self, value: Any, w: float, prefix: List, c: int = 1) -> None:
         """ Adds new internal nodes to the SimplePrefixTree assuming the tree
-        already has values stored within it.
+        already has values stored within it.  If the node to be inserted already
+        exists, the existing node's weight is updated instead. When a new node
+        needs to be created, self.add() is called.
         """
 
         if c <= len(prefix):
@@ -333,8 +359,7 @@ class SimplePrefixTree(Autocompleter):
             if i >= 0:
                 if c == 1:
                     # add weight to root since new prefix matches deeper prefix.
-                    self.agg_weight(weight)
-                    # self.weight += weight
+                    self.agg_weight(w)
 
                 if c == len(prefix):
                     # this case is not used if tree contains ('ab', ['a', 'b']
@@ -348,26 +373,18 @@ class SimplePrefixTree(Autocompleter):
                         j = -1
 
                     if j < 0:
-                        self.add_leaf(value, weight, i, 0)
+                        self.add_leaf(value, w, i, 0)
                     else:
-                        # self.subtrees[i].subtrees[j].weight += weight
-                        self.subtrees[i].subtrees[j].agg_weight(weight)
+                        self.subtrees[i].subtrees[j].agg_weight(w)
 
-                    # self.subtrees[i].weight += weight
-                    self.subtrees[i].agg_weight(weight)
+                    self.subtrees[i].agg_weight(w)
 
-                    # add_leaf inserts at front of list, assuming that this case
-                    # occurs when existing prefix tree is longer than prefix
-                    # chain being added. Thus, value being inserted will be
-                    # shorter than the next prefix, and therefore less.
-                    # self.subtrees[i].subtrees.insert(0, last_tree)
                 else:
                     # add weight to subtree since its prefix matches new prefix.
-                    # self.subtrees[i].weight += weight
-                    self.subtrees[i].agg_weight(weight)
-                    self.subtrees[i].add_on(value, weight, prefix, c + 1)
+                    self.subtrees[i].agg_weight(w)
+                    self.subtrees[i].add_on(value, w, prefix, c + 1)
             else:
-                self.add_nw(value, weight, prefix, c)
+                self.add(value, w, prefix, c)
 
     def autocomplete(self, prefix: List,
                      limit: Optional[int] = None) -> List[Tuple[Any, float]]:
@@ -501,9 +518,7 @@ x
 
 if __name__ == '__main__':
 
-    # import python_ta
-    # python_ta.check_all(config={
-    #     'max-nested-blocks': 4
-    # })
-
-
+    import python_ta
+    python_ta.check_all(config={
+        'max-nested-blocks': 4
+    })
