@@ -81,7 +81,7 @@ def test_add_nw()-> None:
 
 def test_add_on()-> None:
 
-    x = SimplePrefixTree()
+    x = SimplePrefixTree('sum')
     x.add_nw('ab', 0.5, ['a', 'b'])
     x.add_on('abc', 0.2, ['a', 'b', 'c'])
 
@@ -98,7 +98,7 @@ def test_add_on()-> None:
     assert x.subtrees[0].subtrees[0].subtrees[1].subtrees[0].value == 'abc'
     assert x.subtrees[0].subtrees[0].subtrees[1].subtrees[0].weight == 0.2
 
-    y = SimplePrefixTree()
+    y = SimplePrefixTree('sum')
     y.add_nw('abc', 0.2, ['a', 'b', 'c'])
     y.add_on('ab', 0.5, ['a', 'b'])
 
@@ -122,7 +122,7 @@ def test_insert():
     # return 1 in this case, since we only count inserted values for the
     # Autocompleter ADT.
 
-    s = SimplePrefixTree()
+    s = SimplePrefixTree('sum')
     s.insert('a', 0.1, [])
     assert str(s) == '[] (0.1)\n  a (0.1)\n'
     assert len(s) == 1
@@ -131,7 +131,7 @@ def test_insert():
     # should result in a tree with three node: two internal nodes with prefixes
     # [] and [x], and then a leaf containing the inserted value.
 
-    s = SimplePrefixTree()
+    s = SimplePrefixTree('sum')
     s.insert('a', 0.1, ['a'])
     assert str(s) == "[] (0.1)\n  ['a'] (0.1)\n    a (0.1)\n"
     assert len(s) == 1
@@ -141,12 +141,48 @@ def test_insert():
     # prefixes [], [x_1], [x_1, x_2], etc., and then a leaf containing the
     # inserted value.
 
-    s = SimplePrefixTree()
+    s = SimplePrefixTree('sum')
     prefix = ['a','b','c']
     s.insert('a', 0.1, prefix)
     assert len(s) == 1
     assert s.subtrees[0].subtrees[0].subtrees[0].subtrees[0].value == 'a'
     # shows 5 nodes, len prefix plus 2
+
+    s = SimplePrefixTree('average')
+    s.insert('a', 0.1, [])
+    assert str(s) == '[] (0.1)\n  a (0.1)\n'
+    assert len(s) == 1
+
+    # Inserting one value with a length-one prefix [x] into a new prefix tree
+    # should result in a tree with three node: two internal nodes with prefixes
+    # [] and [x], and then a leaf containing the inserted value.
+
+    s = SimplePrefixTree('average')
+    s.insert('a', 0.1, ['a'])
+    assert str(s) == "[] (0.1)\n  ['a'] (0.1)\n    a (0.1)\n"
+    assert len(s) == 1
+
+    # Inserting one value with a length-n prefix [x_1, ..., x_n] into a new
+    # prefix tree should result in a tree with (n+2) nodes: internal nodes with
+    # prefixes [], [x_1], [x_1, x_2], etc., and then a leaf containing the
+    # inserted value.
+
+    s = SimplePrefixTree('average')
+    prefix = ['a', 'b', 'c']
+    s.insert('a', 0.1, prefix)
+    assert len(s) == 1
+    assert s.subtrees[0].subtrees[0].subtrees[0].subtrees[0].value == 'a'
+    # shows 5 nodes, len prefix plus 2
+
+    s = SimplePrefixTree('average')
+    s.insert('car', 1.0, ['c', 'a', 'r'])
+    assert str(s) == "[] (1.0)\n  ['c'] (1.0)\n    ['c', 'a'] (1.0)\n      ['c', 'a', 'r'] (1.0)\n        car (1.0)\n"
+
+    s.insert('cat', 2.0, ['c', 'a', 't'])
+    assert str(s) == "[] (1.5)\n  ['c'] (1.5)\n    ['c', 'a'] (1.5)\n      ['c', 'a', 't'] (2.0)\n        cat (2.0)\n      ['c', 'a', 'r'] (1.0)\n        car (1.0)\n"
+
+    s.insert('care', 3.0, ['c', 'a', 'r', 'e'])
+    assert str(s) == "[] (2.0)\n  ['c'] (2.0)\n    ['c', 'a'] (2.0)\n      ['c', 'a', 't'] (2.0)\n        cat (2.0)\n      ['c', 'a', 'r'] (2.0)\n        ['c', 'a', 'r', 'e'] (3.0)\n          care (3.0)\n        car (1.0)\n"
 
 if __name__ == '__main__':
     import pytest

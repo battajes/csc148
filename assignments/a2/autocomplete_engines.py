@@ -136,7 +136,8 @@ class SentenceAutocompleteEngine:
 
         *Skip lines that do not contain at least one alphanumeric character!*
 
-        When each string is inserted, it is given a weight of one.
+        When each string is inserted, it is given THE WEIGHT SPECIFIED ON THE
+        LINE FROM THE CSV FILE. (Updated Nov 19)
         Note that it is possible for the same string to appear on more than
         one line of the input file; this would result in that string getting
         a larger weight.
