@@ -53,6 +53,19 @@ class Autocompleter:
         """
         raise NotImplementedError
 
+    # def autocomplete(self, prefix: List,
+    #                  limit: Optional[int] = None) -> List[Tuple[Any, float]]:
+    #     """Return up to <limit> matches for the given prefix.
+    #
+    #     The return value is a list of tuples (value, weight), and must be
+    #     ordered in non-increasing weight. (You can decide how to break ties.)
+    #
+    #     If limit is None, return *every* match for the given prefix.
+    #
+    #     Precondition: limit is None or limit > 0.
+    #     """
+    #     raise NotImplementedError
+    
     def autocomplete(self, prefix: List,
                      limit: Optional[int] = None) -> List[Tuple[Any, float]]:
         """Return up to <limit> matches for the given prefix.
@@ -64,7 +77,48 @@ class Autocompleter:
 
         Precondition: limit is None or limit > 0.
         """
-        raise NotImplementedError
+
+        if self.is_empty():
+            return []
+        else:
+            match = self.find_match(prefix)
+            if match is not None:
+                return match.find_leaves(prefix)
+            else:
+                return []
+
+    def find_match(self, prefix: List,
+                     limit: Optional[int] = None,
+                     c: int = 1) -> Optional[SimplePrefixTree]:
+
+        if c <= len(prefix):
+
+            i = 0
+            while i < len(self.subtrees):
+                if self.subtrees[i].value == prefix[:c] and c < len(prefix):
+                    return self.subtrees[i].find_match(prefix, None, c + 1)
+                elif self.subtrees[i].value == prefix[:c] and c == len(prefix):
+                    return self.subtrees[i]
+                i += 1
+            return None
+        elif len(prefix) == 0:
+            return self
+
+    def find_leaves(self, prefix: List,
+                     limit: Optional[int] = None,
+                     c: int = 1) -> List[Tuple[Any, float]]:
+
+        leaves = []
+
+        if self.is_empty():
+            return []
+        elif self.is_leaf():
+            leaves.extend([(self.value, self.weight)])
+        else:
+            size = 0
+            for subtree in self.subtrees:
+                leaves.extend(subtree.find_leaves(prefix))
+        return leaves
 
     def remove(self, prefix: List) -> None:
         """Remove all values that match the given prefix.
@@ -329,7 +383,7 @@ class SimplePrefixTree(Autocompleter):
         last_tree.weight = weight
         self.subtrees[i].subtrees.insert(j, last_tree)
 
-    def agg_weight(self, weight: int) -> None:
+    def agg_weight(self, weight: float) -> None:
         """ Aggregate new weight with self.weight.
             Sum or average, depending on weight type of self.
         """
@@ -386,18 +440,18 @@ class SimplePrefixTree(Autocompleter):
             else:
                 self.add(value, w, prefix, c)
 
-    def autocomplete(self, prefix: List,
-                     limit: Optional[int] = None) -> List[Tuple[Any, float]]:
-        """Return up to <limit> matches for the given prefix.
-
-        The return value is a list of tuples (value, weight), and must be
-        ordered in non-increasing weight. (You can decide how to break ties.)
-
-        If limit is None, return *every* match for the given prefix.
-
-        Precondition: limit is None or limit > 0.
-        """
-        raise NotImplementedError
+    # def autocomplete(self, prefix: List,
+    #                  limit: Optional[int] = None) -> List[Tuple[Any, float]]:
+    #     """Return up to <limit> matches for the given prefix.
+    #
+    #     The return value is a list of tuples (value, weight), and must be
+    #     ordered in non-increasing weight. (You can decide how to break ties.)
+    #
+    #     If limit is None, return *every* match for the given prefix.
+    #
+    #     Precondition: limit is None or limit > 0.
+    #     """
+    #     raise NotImplementedError
 
     def remove(self, prefix: List) -> None:
         """Remove all values that match the given prefix.
@@ -522,3 +576,9 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'max-nested-blocks': 4
     })
+    s = SimplePrefixTree('average')
+    s.insert('car', 1.0, ['c', 'a', 'r'])
+    s.insert('cat', 2.0, ['c', 'a', 't'])
+    s.insert('care', 3.0, ['c', 'a', 'r', 'e'])
+    print(str(s))
+    s.autocomplete([])
