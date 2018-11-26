@@ -53,19 +53,6 @@ class Autocompleter:
         """
         raise NotImplementedError
 
-    # def autocomplete(self, prefix: List,
-    #                  limit: Optional[int] = None) -> List[Tuple[Any, float]]:
-    #     """Return up to <limit> matches for the given prefix.
-    #
-    #     The return value is a list of tuples (value, weight), and must be
-    #     ordered in non-increasing weight. (You can decide how to break ties.)
-    #
-    #     If limit is None, return *every* match for the given prefix.
-    #
-    #     Precondition: limit is None or limit > 0.
-    #     """
-    #     raise NotImplementedError
-    
     def autocomplete(self, prefix: List,
                      limit: Optional[int] = None) -> List[Tuple[Any, float]]:
         """Return up to <limit> matches for the given prefix.
@@ -77,48 +64,7 @@ class Autocompleter:
 
         Precondition: limit is None or limit > 0.
         """
-
-        if self.is_empty():
-            return []
-        else:
-            match = self.find_match(prefix)
-            if match is not None:
-                return match.find_leaves(prefix)
-            else:
-                return []
-
-    def find_match(self, prefix: List,
-                     limit: Optional[int] = None,
-                     c: int = 1) -> Optional[SimplePrefixTree]:
-
-        if c <= len(prefix):
-
-            i = 0
-            while i < len(self.subtrees):
-                if self.subtrees[i].value == prefix[:c] and c < len(prefix):
-                    return self.subtrees[i].find_match(prefix, None, c + 1)
-                elif self.subtrees[i].value == prefix[:c] and c == len(prefix):
-                    return self.subtrees[i]
-                i += 1
-            return None
-        elif len(prefix) == 0:
-            return self
-
-    def find_leaves(self, prefix: List,
-                     limit: Optional[int] = None,
-                     c: int = 1) -> List[Tuple[Any, float]]:
-
-        leaves = []
-
-        if self.is_empty():
-            return []
-        elif self.is_leaf():
-            leaves.extend([(self.value, self.weight)])
-        else:
-            size = 0
-            for subtree in self.subtrees:
-                leaves.extend(subtree.find_leaves(prefix))
-        return leaves
+        raise NotImplementedError
 
     def remove(self, prefix: List) -> None:
         """Remove all values that match the given prefix.
@@ -394,6 +340,29 @@ class SimplePrefixTree(Autocompleter):
                           (self.num_leaves + 1)
         self.num_leaves += 1
 
+    def move_left(self, i: int) -> int:
+        """
+        When values are added, the weights can be out of order.  A parent tree
+        may have a new aggregate weight making the list of subtrees which it
+        resides in, unordered by non-increasing weight. I have to find a way to
+        move such subtrees to the right position.
+
+        Since weights will only increase with aggregation, only need to check
+        if new weight is larger than weight of tree to before it in list.  If so
+        switch places of trees.  Since list starts at left, this is called
+        move_left().
+
+        Returns new index after move is complete.  If index is unchanged,
+        returns original index.
+        """
+
+        if len(self.subtrees) > 1:
+            while i > 0 and self.subtrees[i].weight > self.subtrees[i-1].weight:
+                self.subtrees[i-1], self.subtrees[i] = self.subtrees[i], \
+                                                       self.subtrees[i-1]
+                i -= 1
+        return i
+
     def add_on(self, value: Any, w: float, prefix: List, c: int = 1) -> None:
         """ Adds new internal nodes to the SimplePrefixTree assuming the tree
         already has values stored within it.  If the node to be inserted already
@@ -436,22 +405,84 @@ class SimplePrefixTree(Autocompleter):
                 else:
                     # add weight to subtree since its prefix matches new prefix.
                     self.subtrees[i].agg_weight(w)
+                    i = self.move_left(i)
                     self.subtrees[i].add_on(value, w, prefix, c + 1)
             else:
                 self.add(value, w, prefix, c)
 
-    # def autocomplete(self, prefix: List,
-    #                  limit: Optional[int] = None) -> List[Tuple[Any, float]]:
-    #     """Return up to <limit> matches for the given prefix.
-    #
-    #     The return value is a list of tuples (value, weight), and must be
-    #     ordered in non-increasing weight. (You can decide how to break ties.)
-    #
-    #     If limit is None, return *every* match for the given prefix.
-    #
-    #     Precondition: limit is None or limit > 0.
-    #     """
-    #     raise NotImplementedError
+    def autocomplete(self, prefix: List,
+                     limit: Optional[int] = None) -> List[Tuple[Any, float]]:
+        """Return up to <limit> matches for the given prefix.
+
+        The return value is a list of tuples (value, weight), and must be
+        ordered in non-increasing weight. (You can decide how to break ties.)
+
+        If limit is None, return *every* match for the given prefix.
+
+        Precondition: limit is None or limit > 0.
+        """
+
+        if self.is_empty():
+            return []
+        else:
+            match = self.find_match(prefix)
+            if match is not None:
+                return match.find_leaves(prefix, limit)[0]
+            else:
+                return []
+
+    def find_match(self, prefix: List, limit: Optional[int] = None,
+                   c: int = 1) -> Optional[SimplePrefixTree]:
+        """ Checks if given prefix is in the SimplePrefixTree. Returns
+        SimplePrefixTree starting with prefix.  If prefix is not in tree,
+        returns None.
+        """
+        if c <= len(prefix):
+
+            i = 0
+            while i < len(self.subtrees):
+                if self.subtrees[i].value == prefix[:c] and c < len(prefix):
+                    match = self.subtrees[i].find_match(prefix, None, c + 1)
+                    return match
+                elif self.subtrees[i].value == prefix[:c] and c == len(prefix):
+                    match = self.subtrees[i]
+                    return match
+                i += 1
+            return None
+        elif len(prefix) == 0:
+            return self
+
+    def find_leaves(self, prefix: List,
+                    limit: Optional[int] = None,
+                    found: int = 0) -> Tuple[List[Tuple[Any, float]], int]:
+        """ Finds all leaves in the SimplePrefixTree and returns a list of
+        tuples containing the value and weight of each leaf.  The returned list
+        is in order of non-increasing weight."""
+
+        leaves = []
+
+        if self.is_empty():
+            return [], 0
+        elif self.is_leaf():
+            if not at_lim(limit, found):
+                leaves.extend([(self.value, self.weight)])
+                found += 1
+            else:
+                return [], 0
+        # elif at_lim(limit, found):
+        #     return leaves, found
+        else:
+            for subtree in self.subtrees:
+                if not at_lim(limit, found):
+                    pair = subtree.find_leaves(prefix, limit, found)
+                    leaves.extend(pair[0])
+                    found = pair[1]
+                    # found += pair[1] can add too many
+                else:
+                    leaves.sort(reverse=True, key=take_weight)
+                    return leaves, found
+        leaves.sort(reverse=True, key=take_weight)
+        return leaves, found
 
     def remove(self, prefix: List) -> None:
         """Remove all values that match the given prefix.
@@ -570,15 +601,39 @@ x
         return b
 
 
+def take_weight(elem: Tuple[Any, int]) -> int:
+    """ Returns the second value of the given tuple. Tuples passed to this
+    function will contain a value of any type in the first element of the tuple,
+    and a weight in the second element of the tuple.  This function returns the
+    weight.
+    """
+    return elem[1]
+
+
+def at_lim(limit: Optional[int], found: int) -> bool:
+
+    if limit is None:
+        at_lim = False
+    else:
+        if found >= limit:
+            at_lim = True
+        else:
+            at_lim = False
+
+    return at_lim
+
+
 if __name__ == '__main__':
 
-    import python_ta
-    python_ta.check_all(config={
-        'max-nested-blocks': 4
-    })
-    s = SimplePrefixTree('average')
-    s.insert('car', 1.0, ['c', 'a', 'r'])
-    s.insert('cat', 2.0, ['c', 'a', 't'])
-    s.insert('care', 3.0, ['c', 'a', 'r', 'e'])
-    print(str(s))
-    s.autocomplete([])
+    # import python_ta
+    # python_ta.check_all(config={
+    #     'max-nested-blocks': 4
+    # })
+    x = SimplePrefixTree('average')
+    x.insert('car', 20, ['c', 'a', 'r'])
+    x.insert('cat', 10, ['c', 'a', 't'])
+    x.insert('care', 5, ['c', 'a', 'r', 'e'])
+    print(str(x))
+    # y = x.autocomplete([])
+    # print(y)
+    # 1, 2, 4
