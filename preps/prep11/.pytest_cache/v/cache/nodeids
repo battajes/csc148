@@ -1,0 +1,4 @@
+[
+  "prep11_sample_test.py::test_kth_smallest",
+  "prep11_sample_test.py::test_mergesort3"
+]

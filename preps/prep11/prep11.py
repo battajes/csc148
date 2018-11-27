@@ -202,7 +202,7 @@ def merge3(lst1: List, lst2: List, lst3: List) -> List:
     # can all be added to the end of <merged>.
     return merged + lst1[index1:] + lst2[index2:] + lst3[index3:]
 
-    # TODO: Implement this function
+
 def kth_smallest(lst: List, k: int) -> Any:
     """Return the <k>-th smallest element in <lst>.
 
@@ -210,12 +210,12 @@ def kth_smallest(lst: List, k: int) -> Any:
     Note: for convenience, k starts at 0, so kth_smallest(lst, 0) == min(lst).
 
     Precondition: <lst> does not contain duplicates.
-    # >>> kth_smallest([10, 20, 30, 40], 2)
-    # 30
-    # >>> kth_smallest([10, 20, -4, 3], 0)
-    # -4
-    # >>> kth_smallest([10, 20, -4, 3], 2)
-    # 10
+    >>> kth_smallest([10, 20, 30, 40], 2)
+    30
+    >>> kth_smallest([10, 20, -4, 3], 0)
+    -4
+    >>> kth_smallest([10, 20, -4, 3], 2)
+    10
     """
     # You may *not* sort the list here (this is easy but not very efficient).
     # Instead, use the following approach, based on quicksort:
@@ -231,14 +231,7 @@ def kth_smallest(lst: List, k: int) -> Any:
         return lst[0]
     else:
         pivot = lst[0]
-        smaller = []
-        bigger = []
-
-        for item in lst[1:]:
-            if item <= pivot:
-                smaller.append(item)
-            else:
-                bigger.append(item)
+        smaller = _partition(lst[1:], pivot)[0]
 
         if len(smaller) == k:
             answer = pivot
@@ -247,13 +240,6 @@ def kth_smallest(lst: List, k: int) -> Any:
         else:
             answer = kth_smallest(lst[1:], k - 1)
 
-        # smaller.append(pivot)
-        #
-        # while len(smaller) != k:
-        #     if len(smaller) > k:
-        #         answer = kth_smallest(smallest)
-        #     elif len(smaller) < k:
-        #         answer = kth_smallest(biggest)
         return answer
 
 
@@ -261,5 +247,5 @@ if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
-    # import python_ta
-    # python_ta.check_all()
+    import python_ta
+    python_ta.check_all()

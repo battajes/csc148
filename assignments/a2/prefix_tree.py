@@ -431,7 +431,7 @@ class SimplePrefixTree(Autocompleter):
             else:
                 return []
 
-    def find_match(self, prefix: List, limit: Optional[int] = None,
+    def find_match(self, prefix: List,
                    c: int = 1) -> Optional[SimplePrefixTree]:
         """ Checks if given prefix is in the SimplePrefixTree. Returns
         SimplePrefixTree starting with prefix.  If prefix is not in tree,
@@ -442,7 +442,7 @@ class SimplePrefixTree(Autocompleter):
             i = 0
             while i < len(self.subtrees):
                 if self.subtrees[i].value == prefix[:c] and c < len(prefix):
-                    match = self.subtrees[i].find_match(prefix, None, c + 1)
+                    match = self.subtrees[i].find_match(prefix, c + 1)
                     return match
                 elif self.subtrees[i].value == prefix[:c] and c == len(prefix):
                     match = self.subtrees[i]
@@ -487,7 +487,57 @@ class SimplePrefixTree(Autocompleter):
     def remove(self, prefix: List) -> None:
         """Remove all values that match the given prefix.
         """
-        raise NotImplementedError
+
+        if len(prefix) == 0:
+            self.subtrees = []
+            self.weight = 0
+        else:
+            ex_weight, ex_leaves = self.remove_match(prefix)
+            # check that this doesn't cause any bugs, especially removing
+            # a value twice. ie removing a value that isn't there.
+            if ex_leaves > 0:
+                self.remove_weight(ex_weight, ex_leaves)
+
+    def remove_match(self, prefix: List, c: int = 1) -> Tuple[float, int]:
+        """ Checks if given prefix is in the SimplePrefixTree and removes Tree.
+        Returns weight and number of leaves of removed prefix.
+        If not in tree, returns (-1, -1).
+        """
+        if c <= len(prefix):
+
+            i = 0
+            while i < len(self.subtrees):
+                if self.subtrees[i].value == prefix[:c] and c < len(prefix):
+                    ex_weight, ex_leaves = \
+                        self.subtrees[i].remove_match(prefix, c + 1)
+                    if ex_leaves > 0:
+                        self.subtrees[i].remove_weight(ex_weight, ex_leaves)
+                        if self.subtrees[i].subtrees == []:
+                            del(self.subtrees[i])
+                        return ex_weight, ex_leaves
+                elif c == len(prefix) and self.subtrees[i].value == prefix[:c]:
+                    weight, leaves = self.subtrees[i].weight, \
+                                     self.subtrees[i].num_leaves
+                    del(self.subtrees[i])
+                    return weight, leaves
+                i += 1
+            return -1, -1
+
+    def remove_weight(self, weight: float, leaves: int) -> None:
+        """ Remove weight.
+            Sum or average, depending on weight type of self.
+        """
+        if self._weight_type == 'sum':
+            self.weight -= weight
+        elif self._weight_type == 'average':
+            try:
+                self.weight = (self.weight * self.num_leaves - weight) / \
+                              (self.num_leaves - leaves)
+            except ZeroDivisionError:
+                if self.weight * self.num_leaves - weight == 0:
+                    self.weight = 0
+                    self.num_leaves = 0
+        self.num_leaves -= 1
 
 
 ################################################################################
@@ -637,3 +687,9 @@ if __name__ == '__main__':
     # y = x.autocomplete([])
     # print(y)
     # 1, 2, 4
+    x.remove(['c', 'a', 'r', 'e'])
+    # x.remove(['c', 'a', 'r'])
+    # x.remove(['c', 'a', 't'])
+    # x.remove(['c', 'a'])
+    print(str(x))
+

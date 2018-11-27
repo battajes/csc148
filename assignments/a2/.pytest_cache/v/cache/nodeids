@@ -1,7 +1,8 @@
 [
   "a2_test.py::test_len",
   "a2_test.py::test_contains",
-  "a2_test.py::test_add_nw",
+  "a2_test.py::test_add",
   "a2_test.py::test_add_on",
-  "a2_test.py::test_insert"
+  "a2_test.py::test_insert",
+  "a2_test.py::test_remove"
 ]
