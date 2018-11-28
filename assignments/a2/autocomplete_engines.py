@@ -350,4 +350,11 @@ if __name__ == '__main__':
 
     # print(sample_letter_autocomplete())
     # print(sample_sentence_autocomplete())
-    sample_melody_autocomplete()
+    # sample_melody_autocomplete()
+
+    engine = MelodyAutocompleteEngine({
+        'file': 'data/songbook.csv',
+        'autocompleter': 'simple',
+        'weight_type': 'sum'
+    })
+    melodies = engine.autocomplete([0, 0], 20)

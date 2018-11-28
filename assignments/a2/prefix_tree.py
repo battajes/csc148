@@ -279,8 +279,11 @@ class SimplePrefixTree(Autocompleter):
 
             if c == 1:
                 # didn't assign these on the way in, so do it on the way out.
-                self.weight = weight
-                self.num_leaves += 1
+                # this line was not giving the songbook tree a sum weight of 25
+                # self.weight = weight
+                self.agg_weight(weight)
+                # this was already included in agg_weight, added one too many.
+                # self.num_leaves += 1
             if c == len(prefix):
                 # i value found from find_place().
                 self.add_leaf(value, weight, i, 0)
