@@ -676,10 +676,17 @@ class CompressedPrefixTree(SimplePrefixTree):
         self.subtrees[i].subtrees.insert(j, last_tree)
 
     def add_on(self, value: Any, w: float, prefix: List, c: int = 1):
+
         similarity = 0
         for i in range(len(self.subtrees)):
+            # if prefix_applies(prefix, self.subtrees[i].value):
+            #     self.subtrees[i].add_on(value, w, prefix)
+            #
+            # else:
+
+            # old code, need to make it work recursively
             for j in range(len(prefix)):
-                if prefix[j] == self.subtrees[i].value[j]:
+                if len(self.subtrees[i].value) > j and prefix[j] == self.subtrees[i].value[j]:
                     similarity += 1
                 else:
                     break
@@ -689,19 +696,22 @@ class CompressedPrefixTree(SimplePrefixTree):
 
                 # add the new subtree
                 new_tree.add(value, w, prefix)
-                new_tree.weight = float(w)
-                # new_tree.num_leaves += 1
+                # do this before appending while its easy to access.
+                # have to pass number of leaves in old tree!
+                new_tree.agg_weight(self.subtrees[i].weight,
+                                    self.subtrees[i].num_leaves)
 
                 # add the old subtree by moving it down one level
                 new_tree.subtrees.append(self.subtrees[i])
                 self.subtrees[i] = new_tree
 
                 # adjust position based on weight of lower tree
-                i = self.subtrees[i].move_left(i)
-                
-                self.agg_weight(self.subtrees[i].weight,
-                                    self.subtrees[i].num_leaves)
+                # use len(self.subtrees) because move_left will do nothing if
+                # i = -1. Just want to select end of list as this is where we
+                # appended the old tree above.
+                i = self.subtrees[i].move_left(len(self.subtrees))
 
+                self.agg_weight(w)
                 # adjust position of higher tree based on new weight
                 # i = self.subtrees[i].move_left(i)
 
@@ -831,7 +841,7 @@ def binary_search(l: list, v: Any) -> int:
 
     Precondition: L is sorted from smallest to largest and all the items
     in L can be compared to v.
-x
+
     >>> binary_search([2, 3, 5, 7], 2)
     0
     >>> binary_search([2, 3, 5, 5], 5)
@@ -854,6 +864,26 @@ x
         return -1
     else:
         return b
+
+def prefix_applies(prefix1: List[Any], prefix2: List[Any]) -> bool:
+    """ Compares prefix1 with prefix2, to see if prefix2 is a shorter prefix
+    that applies to parent1 (is a prefix of).
+
+    Assumes prefix2 is shorter prefix1.
+
+    >>> prefix_applies(['h','i'],['h'])
+    True
+    """
+
+    similarity = 0
+    i = 0
+    while i < len(prefix2) and prefix2[i] == prefix1[i]:
+        similarity += 1
+        i += 1
+    if similarity == len(prefix2):
+        return True
+    else:
+        return False
 
 
 def take_weight(elem: Tuple[Any, int]) -> int:
@@ -898,5 +928,10 @@ if __name__ == '__main__':
     # # x.remove(['c', 'a'])
     # print(str(x))
     x = CompressedPrefixTree()
-    x.insert('hi', 3, ['h', 'i'])
-    x.insert('ha', 1, ['h', 'a'])
+    x.insert('hi', 1, ['h', 'i'])
+    print(str(x))
+    x.insert('ha', 3, ['h', 'a'])
+    print(str(x))
+    x.insert('he', 2, ['h', 'e'])
+    print(str(x))
+    print(prefix_applies(['h','i'],['h']))
