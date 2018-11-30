@@ -1,3 +1,7 @@
 {
-  "a2_test.py::test_add_nw": true
+  "a2_test.py::test_add_nw": true,
+  "a2_test_compressed.py::test_add": true,
+  "a2_test_compressed.py::test_add_on": true,
+  "a2_test_compressed.py::test_insert": true,
+  "a2_test_compressed.py::test_remove": true
 }

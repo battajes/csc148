@@ -662,7 +662,9 @@ class CompressedPrefixTree(SimplePrefixTree):
             if similarity > 0:
                 break
 
-        if similarity == len(prefix) + (-c + 1):
+        # added part after 'and' since inserting ab after abc got past this.
+        if similarity == len(prefix) + (-c + 1) and \
+                len(self.subtrees[i].value) == len(prefix):
             try:
                 j = self.subtrees[i].subtree_vals().index(value)
             except ValueError:
@@ -682,6 +684,24 @@ class CompressedPrefixTree(SimplePrefixTree):
             else:
                 self.subtrees[i].agg_weight(w)
                 i = self.move_left(i)
+
+        # added this case late last night, does not work for weights
+        elif 0 < similarity and \
+                similarity + 1 == len(self.subtrees[i].value) + (-c + 1):
+            # case for add('ab'), add_on('abc')
+
+            # new node before existing node
+            new_tree = CompressedPrefixTree(self._weight_type)
+            new_tree.weight = w
+            new_tree.value = prefix[:similarity]
+
+            self.subtrees.append(new_tree)
+            self.add_leaf(value, w, len(self.subtrees) - 1, 1)
+            self.subtrees[len(self.subtrees) - 1].subtrees.append(self.subtrees[i])
+            self.subtrees.pop(i)
+
+            i = self.subtrees[i].move_left(len(self.subtrees) - 1)
+
 
         elif 0 < similarity < len(self.subtrees[i].value) + (-c + 1):
             # 0 < similarity(cat, car) < len(car)
@@ -760,7 +780,7 @@ def compare_prefix(prefix1: List[Any], prefix2: List[Any]) -> int:
     """ Compares prefix1 with prefix2, to see if prefix2 is a shorter prefix
     that applies to parent1 (is a prefix of).
 
-    Assumes prefix2 is shorter prefix1.
+    Stops at shortest prefix length.  Does not assume one is shorter.
 
     >>> compare_prefix(['h','i'],['h'])
     True
@@ -769,7 +789,8 @@ def compare_prefix(prefix1: List[Any], prefix2: List[Any]) -> int:
     similarity = 0
     i = 0
     if isinstance(prefix2, list):
-        while i < len(prefix2) and prefix2[i] == prefix1[i]:
+        while i < len(prefix2) and i < len(prefix1) and \
+                prefix2[i] == prefix1[i]:
             similarity += 1
             i += 1
     return similarity
@@ -815,7 +836,7 @@ if __name__ == '__main__':
     # # x.remove(['c', 'a', 't'])
     # # x.remove(['c', 'a'])
     # print(str(x))
-    x = CompressedPrefixTree()
+    # x = SimplePrefixTree()
     # x.insert('hi', 1, ['h', 'i'])
     # print(str(x))
     # x.insert('hello', 3, ['h', 'i'])
@@ -825,12 +846,16 @@ if __name__ == '__main__':
     # x.insert('cats', 6, ['c', 'a', 't', 's'])
     # print(str(x))
     # print(compare_prefix(['h','i'],['h']))
-    x.insert('car', 1, ['c', 'a', 'r'])
-    x.insert('care', 2, ['c', 'a', 'r','e'])
-    x.insert('cat', 6, ['c', 'a', 't'])
-    x.insert('danger', 1, ['d', 'a', 'n','g','e','r'])
-    x.insert('door', 0.5, ['d', 'o', 'o','r'])
-    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
-    print(str(x))
-    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    # x.insert('car', 1, ['c', 'a', 'r'])
+    # x.insert('care', 2, ['c', 'a', 'r','e'])
+    # x.insert('cat', 6, ['c', 'a', 't'])
+    # x.insert('danger', 1, ['d', 'a', 'n','g','e','r'])
+    # x.insert('door', 0.5, ['d', 'o', 'o','r'])
+    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    # print(str(x))
+    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    y = CompressedPrefixTree('sum')
+    y.add('abc', 0.2, ['a', 'b', 'c'])
+    y.add_on('ab', 0.5, ['a', 'b'])
 

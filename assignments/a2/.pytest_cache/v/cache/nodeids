@@ -1,9 +1,9 @@
 [
-  "a2_test.py::test_len",
-  "a2_test.py::test_contains",
-  "a2_test.py::test_add",
-  "a2_test.py::test_add_on",
-  "a2_test.py::test_insert",
-  "a2_test.py::test_remove",
-  "a2_test.py::test_compressed_tree"
+  "a2_test_compressed.py::test_len",
+  "a2_test_compressed.py::test_contains",
+  "a2_test_compressed.py::test_add",
+  "a2_test_compressed.py::test_add_on",
+  "a2_test_compressed.py::test_insert",
+  "a2_test_compressed.py::test_remove",
+  "a2_test_compressed.py::test_compressed_tree"
 ]
