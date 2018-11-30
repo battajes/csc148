@@ -1,7 +1,7 @@
 """A2 tests
 """
 
-from prefix_tree import SimplePrefixTree
+from prefix_tree import SimplePrefixTree, CompressedPrefixTree
 
 
 def test_len() -> None:
@@ -291,7 +291,6 @@ def test_insert() -> None:
     assert x.autocomplete(['o'], 0) == []  # same as len() == 0
     assert len(x.autocomplete(['p', 'r'], 2)) == 2
 
-
 def test_remove() -> None:
 
     x = SimplePrefixTree('average')
@@ -305,6 +304,54 @@ def test_remove() -> None:
     assert x.weight == 20.0
     x.remove(['c', 'a'])
     assert x.weight == 0
+
+def test_compressed_tree() -> None:
+
+    # x = SimplePrefixTree('average')
+    # x.insert('car', 20, ['c', 'a', 'r'])
+    # x.insert('cat', 10, ['c', 'a', 't'])
+    # x.insert('care', 5, ['c', 'a', 'r', 'e'])
+    # print(str(x))
+    # # y = x.autocomplete([])
+    # # print(y)
+    # # 1, 2, 4
+    # x.remove(['c', 'a', 'r', 'e'])
+    # # x.remove(['c', 'a', 'r'])
+    # # x.remove(['c', 'a', 't'])
+    # # x.remove(['c', 'a'])
+    # print(str(x))
+
+    # x = CompressedPrefixTree()
+
+    # x.insert('hi', 1, ['h', 'i'])
+    # print(str(x))
+    # x.insert('hello', 3, ['h', 'i'])
+    # print(str(x))
+    # x.insert('he', 2, ['h', 'e'])
+    # print(str(x))
+    # x.insert('cats', 6, ['c', 'a', 't', 's'])
+    # print(str(x))
+    # print(compare_prefix(['h','i'],['h']))
+
+    # x = CompressedPrefixTree()
+    #
+    # x.insert('car', 1, ['c', 'a', 'r'])
+    # x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    # x.insert('cat', 6, ['c', 'a', 't'])
+    # x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    # x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    #
+    # x = CompressedPrefixTree()
+    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    # x.insert('car', 1, ['c', 'a', 'r'])
+    # x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    # x.insert('cat', 6, ['c', 'a', 't'])
+    # x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    # x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    pass
 
 
 if __name__ == '__main__':

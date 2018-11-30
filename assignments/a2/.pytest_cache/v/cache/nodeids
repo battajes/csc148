@@ -4,5 +4,6 @@
   "a2_test.py::test_add",
   "a2_test.py::test_add_on",
   "a2_test.py::test_insert",
-  "a2_test.py::test_remove"
+  "a2_test.py::test_remove",
+  "a2_test.py::test_compressed_tree"
 ]
