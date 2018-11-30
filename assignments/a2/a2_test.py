@@ -68,13 +68,24 @@ def test_contains()-> None:
 
 def test_add()-> None:
 
-    x = SimplePrefixTree()
+    x = SimplePrefixTree('sum')
     x.add('ab', 0.5, ['a', 'b'])
     assert str(x) == \
            "[] (0.5)\n  ['a'] (0.5)\n    ['a', 'b'] (0.5)\n      ab (0.5)\n"
 
-    y = SimplePrefixTree()
+    y = SimplePrefixTree('sum')
     y.add('hello', 0.3, ['h','e','l','l','o'])
+    assert str(y) == "[] (0.3)\n  ['h'] (0.3)\n    ['h', 'e'] (0.3)\n      " + \
+           "['h', 'e', 'l'] (0.3)\n        ['h', 'e', 'l', 'l'] (0.3)\n    " + \
+           "      ['h', 'e', 'l', 'l', 'o'] (0.3)\n            hello (0.3)\n"
+
+    x = SimplePrefixTree('average')
+    x.add('ab', 0.5, ['a', 'b'])
+    assert str(x) == \
+           "[] (0.5)\n  ['a'] (0.5)\n    ['a', 'b'] (0.5)\n      ab (0.5)\n"
+
+    y = SimplePrefixTree('average')
+    y.add('hello', 0.3, ['h', 'e', 'l', 'l', 'o'])
     assert str(y) == "[] (0.3)\n  ['h'] (0.3)\n    ['h', 'e'] (0.3)\n      " + \
            "['h', 'e', 'l'] (0.3)\n        ['h', 'e', 'l', 'l'] (0.3)\n    " + \
            "      ['h', 'e', 'l', 'l', 'o'] (0.3)\n            hello (0.3)\n"
@@ -300,58 +311,360 @@ def test_remove() -> None:
     assert x.weight == 11.666666666666666
     x.remove(['c', 'a', 'r', 'e'])
     assert x.weight == 15.0
+
     x.remove(['c', 'a', 't'])
     assert x.weight == 20.0
+
+    # repeat removals of value no longer there.
+    x.remove(['c', 'a', 't'])
+    assert x.weight == 20.0
+    x.remove(['c', 'a', 't'])
+    assert x.weight == 20.0
+
+    # remove everything
+    x.remove(['c', 'a'])
+    assert x.weight == 0
+    x.remove(['c', 'a'])
+    assert x.weight == 0
     x.remove(['c', 'a'])
     assert x.weight == 0
 
+    x = SimplePrefixTree('sum')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r','e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+    x.insert('danger', 1, ['d', 'a', 'n','g','e','r'])
+    x.insert('door', 0.5, ['d', 'o', 'o','r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    x.remove(['d'])
+
+    assert x.weight == (6 + 2 + 1)
+
+    x = SimplePrefixTree('average')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    x.remove(['d'])
+
+    assert x.weight == (6 + 2 + 1)/3
+
+    x = CompressedPrefixTree('sum')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    x.remove(['d'])  # works, but anything else for compressed tree doesnt
+
+    assert x.weight == (6 + 2 + 1)
+
+    x = CompressedPrefixTree('average')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    x.remove(['d'])  # works, but anything else for compressed tree doesnt
+
+    # can we put the d's back?
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    assert x.weight == 11.5 / 6
+    assert x.num_leaves == 6
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 3.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 2.5 / 3
+    assert x.subtrees[1].num_leaves == 3
+    assert x.subtrees[1].subtrees[0].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[0].num_leaves == 1
+    assert x.subtrees[1].subtrees[1].value == ['d', 'o', 'o', 'r']
+    assert x.subtrees[1].subtrees[1].weight == 0.75
+    assert x.subtrees[1].subtrees[1].num_leaves == 2
+    assert x.subtrees[1].subtrees[1].subtrees[1].value == 'door'
+    assert x.subtrees[1].subtrees[1].subtrees[1].weight == 0.5
+    assert x.subtrees[1].subtrees[1].subtrees[1].num_leaves == 0
+    assert x.subtrees[1].subtrees[1].subtrees[0].value == ['d', 'o', 'o', 'r',
+                                                           's']
+    assert x.subtrees[1].subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[1].subtrees[0].num_leaves == 1
+    # yes we can!
+
+    x.remove(['d', 'o', 'o', 'r'])
+
+    assert x.weight == 10 / 4
+    assert x.num_leaves == 4
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 3.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 1.0
+    assert x.subtrees[1].num_leaves == 1
+    assert x.subtrees[1].subtrees[0].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[0].num_leaves == 1
+
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    assert x.weight == 11.5 / 6
+    assert x.num_leaves == 6
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 3.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 2.5 / 3
+    assert x.subtrees[1].num_leaves == 3
+    assert x.subtrees[1].subtrees[0].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[0].num_leaves == 1
+    assert x.subtrees[1].subtrees[1].value == ['d', 'o', 'o', 'r']
+    assert x.subtrees[1].subtrees[1].weight == 0.75
+    assert x.subtrees[1].subtrees[1].num_leaves == 2
+    assert x.subtrees[1].subtrees[1].subtrees[1].value == 'door'
+    assert x.subtrees[1].subtrees[1].subtrees[1].weight == 0.5
+    assert x.subtrees[1].subtrees[1].subtrees[1].num_leaves == 0
+    assert x.subtrees[1].subtrees[1].subtrees[0].value == ['d', 'o', 'o', 'r',
+                                                           's']
+    assert x.subtrees[1].subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[1].subtrees[0].num_leaves == 1
+    # yes we can!
+
+    x.insert('desk', 10, ['d', 'e', 's', 'k'])
+
+
 def test_compressed_tree() -> None:
 
-    # x = SimplePrefixTree('average')
-    # x.insert('car', 20, ['c', 'a', 'r'])
-    # x.insert('cat', 10, ['c', 'a', 't'])
-    # x.insert('care', 5, ['c', 'a', 'r', 'e'])
-    # print(str(x))
-    # # y = x.autocomplete([])
-    # # print(y)
-    # # 1, 2, 4
-    # x.remove(['c', 'a', 'r', 'e'])
-    # # x.remove(['c', 'a', 'r'])
-    # # x.remove(['c', 'a', 't'])
-    # # x.remove(['c', 'a'])
-    # print(str(x))
+    y = CompressedPrefixTree('sum')
+    y.add('abc', 0.2, ['a', 'b', 'c'])
+    y.add_on('abcd', 0.3, ['a', 'b', 'c', 'd'])
+    y.add_on('ab', 0.5, ['a', 'b'])
 
-    # x = CompressedPrefixTree()
+    assert y.weight == 1.0
+    assert y.num_leaves == 3
+    assert y.subtrees[0].subtrees[1].value == ['a', 'b', 'c']
+    assert y.subtrees[0].subtrees[1].weight == 0.5
+    assert y.subtrees[0].subtrees[1].subtrees[0].value == ['a', 'b', 'c', 'd']
+    assert y.subtrees[0].subtrees[1].subtrees[0].weight == 0.3
 
-    # x.insert('hi', 1, ['h', 'i'])
-    # print(str(x))
-    # x.insert('hello', 3, ['h', 'i'])
-    # print(str(x))
-    # x.insert('he', 2, ['h', 'e'])
-    # print(str(x))
-    # x.insert('cats', 6, ['c', 'a', 't', 's'])
-    # print(str(x))
-    # print(compare_prefix(['h','i'],['h']))
+    y = CompressedPrefixTree('sum')
+    y.insert('abc', 0.2, ['a', 'b', 'c'])
+    y.insert('abcd', 0.3, ['a', 'b', 'c', 'd'])
+    y.insert('ab', 0.5, ['a', 'b'])
 
-    # x = CompressedPrefixTree()
-    #
-    # x.insert('car', 1, ['c', 'a', 'r'])
-    # x.insert('care', 2, ['c', 'a', 'r', 'e'])
-    # x.insert('cat', 6, ['c', 'a', 't'])
-    # x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
-    # x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
-    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
-    #
-    # x = CompressedPrefixTree()
-    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
-    # x.insert('car', 1, ['c', 'a', 'r'])
-    # x.insert('care', 2, ['c', 'a', 'r', 'e'])
-    # x.insert('cat', 6, ['c', 'a', 't'])
-    # x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
-    # x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
-    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
-    # x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
-    pass
+    assert y.weight == 1.0
+    assert y.num_leaves == 3
+    assert y.subtrees[0].subtrees[1].value == ['a', 'b', 'c']
+    assert y.subtrees[0].subtrees[1].weight == 0.5
+    assert y.subtrees[0].subtrees[1].subtrees[0].value == ['a', 'b', 'c', 'd']
+    assert y.subtrees[0].subtrees[1].subtrees[0].weight == 0.3
+
+    y = CompressedPrefixTree('average')
+    y.add('abc', 0.2, ['a', 'b', 'c'])
+    y.add_on('ab', 0.5, ['a', 'b'])
+
+    assert y.weight == 0.35
+    assert y.num_leaves == 2
+    assert y.subtrees[0].subtrees[1].value == ['a', 'b', 'c']
+    assert y.subtrees[0].subtrees[1].weight == 0.2
+    assert y.subtrees[0].subtrees[1].subtrees[0].value == 'abc'
+    assert y.subtrees[0].subtrees[1].subtrees[0].weight == 0.2
+
+    y = CompressedPrefixTree('average')
+    y.add('abc', 0.2, ['a', 'b', 'c'])
+    y.add_on('abcd', 0.3, ['a', 'b', 'c', 'd'])
+    y.add_on('ab', 0.5, ['a', 'b'])
+
+    assert y.weight == 1.0/3
+    assert y.num_leaves == 3
+    assert y.subtrees[0].value == ['a', 'b']
+    assert y.subtrees[0].weight == y.weight
+    assert y.subtrees[0].subtrees[1].value == ['a', 'b', 'c']
+    assert y.subtrees[0].subtrees[1].weight == 0.25
+    assert y.subtrees[0].subtrees[1].subtrees[0].value == ['a', 'b', 'c', 'd']
+    assert y.subtrees[0].subtrees[1].subtrees[0].weight == 0.3
+    assert y.subtrees[0].subtrees[1].subtrees[1].value == 'abc'
+    assert y.subtrees[0].subtrees[1].subtrees[1].weight == 0.2
+
+    y = CompressedPrefixTree('average')
+    y.insert('abc', 0.2, ['a', 'b', 'c'])
+    y.insert('abcd', 0.3, ['a', 'b', 'c', 'd'])
+    y.insert('ab', 0.5, ['a', 'b'])
+
+    assert y.weight == 1.0 / 3
+    assert y.num_leaves == 3
+    assert y.subtrees[0].value == ['a', 'b']
+    assert y.subtrees[0].weight == y.weight
+    assert y.subtrees[0].subtrees[1].value == ['a', 'b', 'c']
+    assert y.subtrees[0].subtrees[1].weight == 0.25
+    assert y.subtrees[0].subtrees[1].subtrees[0].value == ['a', 'b', 'c', 'd']
+    assert y.subtrees[0].subtrees[1].subtrees[0].weight == 0.3
+    assert y.subtrees[0].subtrees[1].subtrees[1].value == 'abc'
+    assert y.subtrees[0].subtrees[1].subtrees[1].weight == 0.2
+
+    x = CompressedPrefixTree('average')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    assert x.weight == 11.0/6
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 3.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 2.0/3
+    assert x.subtrees[1].num_leaves == 3
+    assert x.subtrees[1].subtrees[0].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[0].num_leaves == 1
+    assert x.subtrees[1].subtrees[1].value == ['d', 'o', 'o', 'r']
+    assert x.subtrees[1].subtrees[1].weight == 0.5
+    assert x.subtrees[1].subtrees[1].num_leaves == 2
+    assert x.subtrees[1].subtrees[1].subtrees[0].value == 'door'
+    assert x.subtrees[1].subtrees[1].subtrees[0].weight == 0.5
+    assert x.subtrees[1].subtrees[1].subtrees[0].num_leaves == 0
+    assert x.subtrees[1].subtrees[1].subtrees[1].value == ['d', 'o', 'o', 'r', 's']
+    assert x.subtrees[1].subtrees[1].subtrees[1].weight == 0.5
+    assert x.subtrees[1].subtrees[1].subtrees[1].num_leaves == 1
+
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    assert x.weight == 11.5 / 6
+    assert x.num_leaves == 6
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 3.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 2.5 / 3
+    assert x.subtrees[1].num_leaves == 3
+    assert x.subtrees[1].subtrees[0].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[0].num_leaves == 1
+    assert x.subtrees[1].subtrees[1].value == ['d', 'o', 'o', 'r']
+    assert x.subtrees[1].subtrees[1].weight == 0.75
+    assert x.subtrees[1].subtrees[1].num_leaves == 2
+    assert x.subtrees[1].subtrees[1].subtrees[1].value == 'door'
+    assert x.subtrees[1].subtrees[1].subtrees[1].weight == 0.5
+    assert x.subtrees[1].subtrees[1].subtrees[1].num_leaves == 0
+    assert x.subtrees[1].subtrees[1].subtrees[0].value == ['d', 'o', 'o', 'r',
+                                                           's']
+    assert x.subtrees[1].subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[1].subtrees[0].num_leaves == 1
+
+    x = CompressedPrefixTree('sum')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+
+    assert x.weight == 1 + 2 + 6
+    assert x.num_leaves == 3
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 9.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[0].subtrees[1].value == ['c', 'a', 'r']
+    assert x.subtrees[0].subtrees[1].weight == 2 + 1
+    assert x.subtrees[0].subtrees[1].num_leaves == 2
+    assert x.subtrees[0].subtrees[1].subtrees[1].value == 'car'
+    assert x.subtrees[0].subtrees[1].subtrees[1].weight == 1
+    assert x.subtrees[0].subtrees[1].subtrees[1].num_leaves == 0
+
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    assert x.weight == 1 + 2 + 6 + 2
+    assert x.num_leaves == 3 + 3
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 9.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 2.0
+    assert x.subtrees[1].num_leaves == 3
+    assert x.subtrees[1].subtrees[0].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.0
+    assert x.subtrees[1].subtrees[0].num_leaves == 1
+    assert x.subtrees[1].subtrees[1].value == ['d', 'o', 'o', 'r']
+    assert x.subtrees[1].subtrees[1].weight == 1.0
+    assert x.subtrees[1].subtrees[1].num_leaves == 2
+    assert x.subtrees[1].subtrees[1].subtrees[0].value == 'door'
+
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+
+    assert x.weight == 1 + 2 + 6 + 2 + 0.5
+    assert x.num_leaves == 3 + 3
+    assert x.subtrees[0].value == ['c', 'a']
+    assert x.subtrees[0].weight == 9.0
+    assert x.subtrees[0].num_leaves == 3
+    assert x.subtrees[1].value == ['d']
+    assert x.subtrees[1].weight == 2.5
+    assert x.subtrees[1].num_leaves == 3
+    assert x.subtrees[1].subtrees[0].value == ['d', 'o', 'o', 'r']
+    assert x.subtrees[1].subtrees[0].weight == 1.5
+    assert x.subtrees[1].subtrees[0].num_leaves == 2
+    assert x.subtrees[1].subtrees[1].value == ['d', 'a', 'n', 'g', 'e', 'r']
+    assert x.subtrees[1].subtrees[1].weight == 1.0
+    assert x.subtrees[1].subtrees[1].num_leaves == 1
+    assert x.subtrees[1].subtrees[1].subtrees[0].value == 'danger'
+
+def test_autocomplete() -> None:
+
+    x = CompressedPrefixTree('sum')
+    x.insert('car', 1, ['c', 'a', 'r'])
+    x.insert('care', 2, ['c', 'a', 'r', 'e'])
+    x.insert('cat', 6, ['c', 'a', 't'])
+    x.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    x.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    x.insert('desk', 10, ['d', 'e', 's', 'k'])
+
+    y = SimplePrefixTree('sum')
+    y.insert('car', 1, ['c', 'a', 'r'])
+    y.insert('care', 2, ['c', 'a', 'r', 'e'])
+    y.insert('cat', 6, ['c', 'a', 't'])
+    y.insert('danger', 1, ['d', 'a', 'n', 'g', 'e', 'r'])
+    y.insert('door', 0.5, ['d', 'o', 'o', 'r'])
+    y.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    y.insert('doors', 0.5, ['d', 'o', 'o', 'r', 's'])
+    y.insert('desk', 10, ['d', 'e', 's', 'k'])
+
+    assert x.autocomplete(['c']) == y.autocomplete(['c'])
+    assert x.autocomplete(['c', 'a']) == y.autocomplete(['c', 'a'])
+    assert x.autocomplete(['c','a','r']) == y.autocomplete(['c','a','r'])
+    assert x.autocomplete(['c', 'a', 'r', 'e']) == y.autocomplete(['c', 'a', 'r', 'e'])
+    assert x.autocomplete(['c', 'a', 't']) == y.autocomplete(['c', 'a', 't'])
+    assert x.autocomplete(['d']) == y.autocomplete(['d'])
+    assert x.autocomplete(['d', 'o']) == y.autocomplete(['d', 'o'])
+    assert x.autocomplete(['d', 'a']) == y.autocomplete(['d', 'a'])
+    assert x.autocomplete(['d', 'e']) == y.autocomplete(['d', 'e'])
+    assert x.autocomplete(['d', 'e', 's']) == y.autocomplete(['d', 'e', 's'])
+    assert x.autocomplete(['d', 'o', 'o']) == y.autocomplete(['d', 'o', 'o'])
+    assert x.autocomplete(['d', 'a', 'n']) == y.autocomplete(['d', 'a', 'n'])
+    assert x.autocomplete(['d', 'o', 'o', 'r']) == y.autocomplete(['d', 'o', 'o', 'r'])
+    assert x.autocomplete(['d', 'o', 'o', 'r', 's']) == y.autocomplete(['d', 'o', 'o', 'r', 's'])
+    assert x.autocomplete(['d', 'a', 'n', 'g', 'e', 'r']) == y.autocomplete(['d', 'a', 'n', 'g', 'e', 'r'])
 
 
 if __name__ == '__main__':

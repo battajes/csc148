@@ -69,3 +69,14 @@ In[10]: print(str(x))
       car (1.0)
 
 In[11]: x.remove([])
+
+if True:
+  pass
+elif similarity == len(prefix) + (-c + 1) and \
+  len(self.subtrees[i].value) == len(prefix):
+elif similarity = len(prefix):
+  # alternative to next case?
+  # when ab is inserted to abc
+  pass
+elif 0 < similarity and \
+  similarity + 1 == len(self.subtrees[i].value) + (-c + 1):

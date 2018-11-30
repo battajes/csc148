@@ -165,6 +165,8 @@ def test_compressed_prefix_tree_structure() -> None:
     # But note that the prefix values are different!
     assert left.value == ['c', 'a']
     assert left.weight == 5.0
+    assert left.num_leaves == 2
+    assert len(left) == 2
 
     assert right.value == ['d', 'o', 'g']
     assert right.weight == 4.0
