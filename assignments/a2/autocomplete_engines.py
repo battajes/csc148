@@ -109,7 +109,6 @@ class LetterAutocompleteEngine:
         self.autocompleter.remove(prefix_lst)
 
 
-
 class SentenceAutocompleteEngine:
     """An autocomplete engine that suggests strings based on a few words.
 
@@ -314,6 +313,7 @@ def sample_letter_autocomplete() -> List[Tuple[str, float]]:
     # return engine2.autocomplete('sta', 20)
     return engine.autocomplete('frodo d', 20)
 
+
 def sample_sentence_autocomplete() -> List[Tuple[str, float]]:
     """A sample run of the sentence autocomplete engine."""
     engine = SentenceAutocompleteEngine({
@@ -337,24 +337,20 @@ def sample_melody_autocomplete() -> None:
 
 
 if __name__ == '__main__':
-    # import python_ta
-    # python_ta.check_all(config={
-    #     'allowed-io': ['__init__'],
-    #     'extra-imports': ['csv', 'prefix_tree', 'melody']
-    # })
+    import python_ta
+    python_ta.check_all(config={
+        'allowed-io': ['__init__'],
+        'extra-imports': ['csv', 'prefix_tree', 'melody']
+    })
 
     # This is used to increase the recursion limit so that your sample runs
     # work even for fairly tall simple prefix trees.
     import sys
     sys.setrecursionlimit(5000)
 
-    # print(sample_letter_autocomplete())
-    # print(sample_sentence_autocomplete())
-    # sample_melody_autocomplete()
-
-    engine = MelodyAutocompleteEngine({
+    engine_test = MelodyAutocompleteEngine({
         'file': 'data/songbook.csv',
         'autocompleter': 'simple',
         'weight_type': 'sum'
     })
-    melodies = engine.autocomplete([0, 0], 20)
+    melody_test = engine_test.autocomplete([0, 0], 20)

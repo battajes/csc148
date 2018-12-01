@@ -533,13 +533,13 @@ footer {
     <body>
         <header>
             <h1 class="title">PyTA Error Report</h1>
-            <time>Sun. Nov. 25 2018, 06:50:13 PM</time>
+            <time>Fri. Nov. 30 2018, 07:01:26 PM</time>
         </header>
         <main>
             
             <section>
                 <article class="file-name">
-                    <h2> C:/code/csc148/assignments/a2/prefix_tree.py </h2>
+                    <h2> /h/u4/c8/04/wattpatr/csc148/assignments/a2/autocomplete_engines.py </h2>
                 </article>
                 <article class="error-output code-errors">
                     <h3 class="category-heading">
@@ -550,9 +550,42 @@ footer {
                     </h3>
                     <div class="content collapsible">
                         
-                        <span class="empty-placeholder">None!
-
-</span>
+                        <div class="error-instance">
+                            <div class="info">
+                                <span class="error-link code-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;E9999" target="_blank">&#10064; E9999 (forbidden-import)</a>
+                                </span>
+                                <span class="occurrences">
+                                1
+                                
+                                 occurrence.
+                                
+                                </span>
+                                <span class="shown">
+                                
+                                </span>
+                                <span class="slider">
+                                    <button> Expand/Collapse </button>
+                                </span>
+                            </div>
+                            <div class="message-container collapsible">
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 348] You may not import any modules - you imported sys on line 348.
+                                    </h4>
+                                    
+                                    <code>  <span class="grey line-num">346</span>      <span class="grey"><span class="pygments-c1"># This is used to increase the recursion limit so that your sample runs</span></span>
+  <span class="grey line-num">347</span>      <span class="grey"><span class="pygments-c1"># work even for fairly tall simple prefix trees.</span></span>
+  <span class="gbold line-num">348</span>      <span class="black"></span><span class="highlight-pyta"><span class="pygments-kn">import</span> <span class="pygments-nn">sys</span></span>
+  <span class="grey line-num">349</span>      <span class="grey"><span class="pygments-n">sys</span><span class="pygments-o">.</span><span class="pygments-n">setrecursionlimit</span><span class="pygments-p">(</span><span class="pygments-mi">5000</span><span class="pygments-p">)</span></span>
+  <span class="grey line-num">350</span>  <span class="grey"></span>
+</code>
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
                         
                     </div>
                 </article>
@@ -565,194 +598,9 @@ footer {
                     </h3>
                     <div class="content collapsible">
                         
-                        <div class="error-instance">
+                        <span class="empty-placeholder">None!
 
-                            <div class="info">
-                                <span class="error-link style-error-id">
-                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;R1710" target="_blank">&#10064; R1710 (inconsistent-return-statements)</a>
-                                </span>
-                                <span class="occurrences">
-                                1
-                                
-                                 occurrence.
-                                
-                                </span>
-                                <span class="shown">
-                                
-                                </span>
-                                <span class="slider">
-                                   <button> Expand/Collapse </button>
-                                </span>
-                            </div>
-
-                            <div class="message-container collapsible">
-                                
-                                <div class="message">
-                                    <h4 class="message-name">
-                                        [Line 410] Either all return statements in a function should return an expression, or none of them should.
-                                    </h4>
-                                    
-                                    <code>  <span class="grey line-num">408</span>                  <span class="grey"><span class="pygments-k">return</span> <span class="pygments-p">[]</span></span>
-  <span class="grey line-num">409</span>  <span class="grey"></span>
-  <span class="gbold line-num">410</span>      <span class="black"></span><span class="highlight-pyta"><span class="pygments-k">def</span> <span class="pygments-nf">find_match</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> <span class="pygments-n">limit</span><span class="pygments-p">:</span> <span class="pygments-n">Optional</span><span class="pygments-p">[</span><span class="pygments-nb">int</span><span class="pygments-p">]</span> <span class="pygments-o">=</span> <span class="pygments-bp">None</span><span class="pygments-p">,</span></span>
-  <span class="gbold line-num">411</span>                     <span class="highlight-pyta"><span class="pygments-n">c</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span> <span class="pygments-o">=</span> <span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-n">Optional</span><span class="pygments-p">[</span><span class="pygments-n">SimplePrefixTree</span><span class="pygments-p">]:</span></span>
-  <span class="gbold line-num">412</span>          <span class="highlight-pyta"><span class="pygments-s2">&quot;&quot;&quot; Checks if given prefix is in the SimplePrefixTree. Returns</span></span>
-  <span class="gbold line-num">413</span>          <span class="highlight-pyta"><span class="pygments-n">SimplePrefixTree</span> <span class="pygments-n">starting</span> <span class="pygments-k">with</span> <span class="pygments-n">prefix</span><span class="pygments-o">.</span>  <span class="pygments-n">If</span> <span class="pygments-n">prefix</span> <span class="pygments-ow">is</span> <span class="pygments-ow">not</span> <span class="pygments-ow">in</span> <span class="pygments-n">tree</span><span class="pygments-p">,</span></span>
-  <span class="gbold line-num">414</span>          <span class="highlight-pyta"><span class="pygments-n">returns</span> <span class="pygments-bp">None</span><span class="pygments-o">.</span></span>
-  <span class="gbold line-num">415</span>          <span class="highlight-pyta"><span class="pygments-s2">&quot;&quot;&quot;</span></span>
-  <span class="gbold line-num">416</span>          <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-n">c</span> <span class="pygments-o">&lt;=</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
-  <span class="gbold line-num">417</span>  <span class="highlight-pyta"></span>
-  <span class="gbold line-num">418</span>              <span class="highlight-pyta"><span class="pygments-n">i</span> <span class="pygments-o">=</span> <span class="pygments-mi">0</span></span>
-  <span class="gbold line-num">419</span>              <span class="highlight-pyta"><span class="pygments-k">while</span> <span class="pygments-n">i</span> <span class="pygments-o">&lt;</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">subtrees</span><span class="pygments-p">):</span></span>
-  <span class="gbold line-num">420</span>                  <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">subtrees</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">]</span><span class="pygments-o">.</span><span class="pygments-n">value</span> <span class="pygments-o">==</span> <span class="pygments-n">prefix</span><span class="pygments-p">[:</span><span class="pygments-n">c</span><span class="pygments-p">]</span> <span class="pygments-ow">and</span> <span class="pygments-n">c</span> <span class="pygments-o">&lt;</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
-  <span class="gbold line-num">421</span>                      <span class="highlight-pyta"><span class="pygments-n">match</span> <span class="pygments-o">=</span> <span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">subtrees</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">]</span><span class="pygments-o">.</span><span class="pygments-n">find_match</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">,</span> <span class="pygments-bp">None</span><span class="pygments-p">,</span> <span class="pygments-n">c</span> <span class="pygments-o">+</span> <span class="pygments-mi">1</span><span class="pygments-p">)</span></span>
-  <span class="gbold line-num">422</span>                      <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-n">match</span></span>
-  <span class="gbold line-num">423</span>                  <span class="highlight-pyta"><span class="pygments-k">elif</span> <span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">subtrees</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">]</span><span class="pygments-o">.</span><span class="pygments-n">value</span> <span class="pygments-o">==</span> <span class="pygments-n">prefix</span><span class="pygments-p">[:</span><span class="pygments-n">c</span><span class="pygments-p">]</span> <span class="pygments-ow">and</span> <span class="pygments-n">c</span> <span class="pygments-o">==</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">):</span></span>
-  <span class="gbold line-num">424</span>                      <span class="highlight-pyta"><span class="pygments-n">match</span> <span class="pygments-o">=</span> <span class="pygments-bp">self</span><span class="pygments-o">.</span><span class="pygments-n">subtrees</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">]</span></span>
-  <span class="gbold line-num">425</span>                      <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-n">match</span></span>
-  <span class="gbold line-num">426</span>                  <span class="highlight-pyta"><span class="pygments-n">i</span> <span class="pygments-o">+=</span> <span class="pygments-mi">1</span></span>
-  <span class="gbold line-num">427</span>              <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-bp">None</span></span>
-  <span class="gbold line-num">428</span>          <span class="highlight-pyta"><span class="pygments-k">elif</span> <span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">prefix</span><span class="pygments-p">)</span> <span class="pygments-o">==</span> <span class="pygments-mi">0</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">429</span>              <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-bp">self</span></span>
-  <span class="grey line-num">430</span>  <span class="grey"></span>
-  <span class="grey line-num">431</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">find_leaves</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span></span>
-</code>
-                                    
-                                </div>
-                                
-                            </div>
-
-                        </div>
-                        
-                        <div class="error-instance">
-
-                            <div class="info">
-                                <span class="error-link style-error-id">
-                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;W0613" target="_blank">&#10064; W0613 (unused-argument)</a>
-                                </span>
-                                <span class="occurrences">
-                                1
-                                
-                                 occurrence.
-                                
-                                </span>
-                                <span class="shown">
-                                
-                                </span>
-                                <span class="slider">
-                                   <button> Expand/Collapse </button>
-                                </span>
-                            </div>
-
-                            <div class="message-container collapsible">
-                                
-                                <div class="message">
-                                    <h4 class="message-name">
-                                        [Line 410] Unused argument 'limit'
-                                    </h4>
-                                    
-                                    <code>  <span class="grey line-num">408</span>                  <span class="grey"><span class="pygments-k">return</span> <span class="pygments-p">[]</span></span>
-  <span class="grey line-num">409</span>  <span class="grey"></span>
-  <span class="gbold line-num">410</span>      <span class="black"><span class="pygments-k">def</span> <span class="pygments-nf">find_match</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">,</span> </span><span class="highlight-pyta"><span class="pygments-n">limit</span></span><span class="black"><span class="pygments-p">:</span> <span class="pygments-n">Optional</span><span class="pygments-p">[</span><span class="pygments-nb">int</span><span class="pygments-p">]</span> <span class="pygments-o">=</span> <span class="pygments-bp">None</span><span class="pygments-p">,</span></span>
-  <span class="grey line-num">411</span>                     <span class="grey"><span class="pygments-n">c</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span> <span class="pygments-o">=</span> <span class="pygments-mi">1</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-n">Optional</span><span class="pygments-p">[</span><span class="pygments-n">SimplePrefixTree</span><span class="pygments-p">]:</span></span>
-  <span class="grey line-num">412</span>          <span class="grey"><span class="pygments-s2">&quot;&quot;&quot; Checks if given prefix is in the SimplePrefixTree. Returns</span></span>
-</code>
-                                    
-                                </div>
-                                
-                            </div>
-
-                        </div>
-                        
-                        <div class="error-instance">
-
-                            <div class="info">
-                                <span class="error-link style-error-id">
-                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;C0111" target="_blank">&#10064; C0111 (missing-docstring)</a>
-                                </span>
-                                <span class="occurrences">
-                                1
-                                
-                                 occurrence.
-                                
-                                </span>
-                                <span class="shown">
-                                
-                                </span>
-                                <span class="slider">
-                                   <button> Expand/Collapse </button>
-                                </span>
-                            </div>
-
-                            <div class="message-container collapsible">
-                                
-                                <div class="message">
-                                    <h4 class="message-name">
-                                        [Line 460] Missing method docstring
-                                    </h4>
-                                    
-                                    <code>  <span class="grey line-num">460</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">at_lim</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">limit</span><span class="pygments-p">:</span> <span class="pygments-n">Optional</span><span class="pygments-p">[</span><span class="pygments-nb">int</span><span class="pygments-p">],</span> <span class="pygments-n">found</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-nb">bool</span><span class="pygments-p">:</span></span>
-  <span class="grey line-num">461</span>  <span class="grey"></span>
-     <span class="black line-num"></span>          <span class="highlight-pyta"><span class="pygments-sd">&quot;&quot;&quot;YOUR DOCSTRING HERE&quot;&quot;&quot;</span></span>
-  <span class="grey line-num">462</span>          <span class="grey"><span class="pygments-k">if</span> <span class="pygments-n">limit</span> <span class="pygments-ow">is</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
-  <span class="grey line-num">463</span>              <span class="grey"><span class="pygments-n">at_lim</span> <span class="pygments-o">=</span> <span class="pygments-bp">False</span></span>
-</code>
-                                    
-                                </div>
-                                
-                            </div>
-
-                        </div>
-                        
-                        <div class="error-instance">
-
-                            <div class="info">
-                                <span class="error-link style-error-id">
-                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;R0201" target="_blank">&#10064; R0201 (no-self-use)</a>
-                                </span>
-                                <span class="occurrences">
-                                1
-                                
-                                 occurrence.
-                                
-                                </span>
-                                <span class="shown">
-                                
-                                </span>
-                                <span class="slider">
-                                   <button> Expand/Collapse </button>
-                                </span>
-                            </div>
-
-                            <div class="message-container collapsible">
-                                
-                                <div class="message">
-                                    <h4 class="message-name">
-                                        [Line 460] Method could be a function
-                                    </h4>
-                                    
-                                    <code>  <span class="grey line-num">458</span>          <span class="grey"><span class="pygments-k">return</span> <span class="pygments-n">leaves</span><span class="pygments-p">,</span> <span class="pygments-n">found</span></span>
-  <span class="grey line-num">459</span>  <span class="grey"></span>
-  <span class="gbold line-num">460</span>      <span class="black"></span><span class="highlight-pyta"><span class="pygments-k">def</span> <span class="pygments-nf">at_lim</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">limit</span><span class="pygments-p">:</span> <span class="pygments-n">Optional</span><span class="pygments-p">[</span><span class="pygments-nb">int</span><span class="pygments-p">],</span> <span class="pygments-n">found</span><span class="pygments-p">:</span> <span class="pygments-nb">int</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-nb">bool</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">461</span>  <span class="highlight-pyta"></span>
-  <span class="gbold line-num">462</span>          <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-n">limit</span> <span class="pygments-ow">is</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">463</span>              <span class="highlight-pyta"><span class="pygments-n">at_lim</span> <span class="pygments-o">=</span> <span class="pygments-bp">False</span></span>
-  <span class="gbold line-num">464</span>          <span class="highlight-pyta"><span class="pygments-k">else</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">465</span>              <span class="highlight-pyta"><span class="pygments-k">if</span> <span class="pygments-n">found</span> <span class="pygments-o">&gt;=</span> <span class="pygments-n">limit</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">466</span>                  <span class="highlight-pyta"><span class="pygments-n">at_lim</span> <span class="pygments-o">=</span> <span class="pygments-bp">True</span></span>
-  <span class="gbold line-num">467</span>              <span class="highlight-pyta"><span class="pygments-k">else</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">468</span>                  <span class="highlight-pyta"><span class="pygments-n">at_lim</span> <span class="pygments-o">=</span> <span class="pygments-bp">False</span></span>
-  <span class="gbold line-num">469</span>  <span class="highlight-pyta"></span>
-  <span class="gbold line-num">470</span>          <span class="highlight-pyta"><span class="pygments-k">return</span> <span class="pygments-n">at_lim</span></span>
-  <span class="grey line-num">471</span>  <span class="grey"></span>
-  <span class="grey line-num">472</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">remove</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">prefix</span><span class="pygments-p">:</span> <span class="pygments-n">List</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-bp">None</span><span class="pygments-p">:</span></span>
-</code>
-                                    
-                                </div>
-                                
-                            </div>
-
-                        </div>
+</span>
                         
                     </div>
                 </article>

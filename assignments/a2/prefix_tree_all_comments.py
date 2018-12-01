@@ -367,57 +367,6 @@ class SimplePrefixTree(Autocompleter):
                 i -= 1
         return i
 
-    def already_leaf(self, i: int, value: Any, w: float) -> Tuple[int, bool]:
-        """
-        Checks if there is already a leaf for the value to be added.  If so,
-        adds to value of leaf, adjusts position of leaf based on weight, and
-        returns True, to indicate that a leaf gained weight.
-        """
-
-        try:
-            j = self.subtrees[i].subtree_vals().index(value)
-        except ValueError:
-            j = -1
-
-        if j < 0:
-            self.add_leaf(value, w, i, 0)
-            # new addition
-            self.subtrees[i].agg_weight(w)
-            i = self.move_left(i)
-            return i, False
-        else:
-            # this is the case if a leaf is being reinforced.
-            self.subtrees[i].subtrees[j].weight += w
-            # new addition
-            self.subtrees[i].weight += w
-            i = self.move_left(i)
-            return i, True
-
-    def not_found(self, i: int,
-                  w: float, c: int, past_leaf: bool) -> Tuple[int, bool]:
-        """ Continues to look for prefix.  If found through recursion, will
-        update weights of parent trees.
-        """
-
-        if past_leaf:
-            # self.subtrees[i].weight += w
-            self.subtrees[i].agg_weight(w, 0)
-            # added
-            i = self.move_left(i)
-        else:
-            self.subtrees[i].agg_weight(w)
-            i = self.move_left(i)
-
-        if c == 1:
-            # add weight since new prefix matches deeper prefix.
-
-            if past_leaf:
-                self.agg_weight(w, 0)
-            else:
-                self.agg_weight(w)
-
-        return i, past_leaf
-
     def add_on(self, value: Any, w: float, prefix: List, c: int = 1) -> bool:
         """ Adds new internal nodes to the SimplePrefixTree assuming the tree
         already has values stored within it.  If the node to be inserted already
@@ -438,19 +387,60 @@ class SimplePrefixTree(Autocompleter):
 
             if i >= 0:
                 if c == len(prefix):
+                    try:
+                        j = self.subtrees[i].subtree_vals().index(value)
+                    except ValueError:
+                        j = -1
 
-                    i, past_leaf = self.already_leaf(i, value, w)
-                    return past_leaf
+                    if j < 0:
+                        self.add_leaf(value, w, i, 0)
+                        # new addition
+                        self.subtrees[i].agg_weight(w)
+                        i = self.move_left(i)
+                        return False
+                    else:
+                        # this is the case if a leaf is being reinforced.
+                        self.subtrees[i].subtrees[j].weight += w
+                        # new addition
+                        self.subtrees[i].weight += w
+                        i = self.move_left(i)
+                        return True
+
+
+                    # just realized this gives all the trees 2 leaves when
+                    # a leaf is inserted the second time.
+                    # could keep track of imaginary leaves, and only use
+                    # to calc weight of leaves
+                    # could make a separate agg_weight function for leaves.
+                    # self.subtrees[i].agg_weight(w)
 
                 else:
                     # add weight to subtree since its prefix matches new prefix.
+                    # self.subtrees[i].agg_weight(w)
+                    # i = self.move_left(i)
+                    # self.subtrees[i].add_on(value, w, prefix, c + 1)
                     past_leaf = self.subtrees[i].add_on(value, w, prefix, c + 1)
 
-                    i, past_leaf = self.not_found(i, w, c, past_leaf)
+                    if past_leaf:
+                        # self.subtrees[i].weight += w
+                        self.subtrees[i].agg_weight(w, 0)
+                        # added
+                        i = self.move_left(i)
+                    else:
+                        self.subtrees[i].agg_weight(w)
+                        i = self.move_left(i)
+
+                    if c == 1:
+                        # add weight since new prefix matches deeper prefix.
+
+                        if past_leaf:
+                            self.agg_weight(w, 0)
+                        else:
+                            self.agg_weight(w)
 
             else:
                 self.add(value, w, prefix, c)
-
+        # new addition
         return past_leaf
 
 
@@ -493,8 +483,7 @@ class SimplePrefixTree(Autocompleter):
                     return match
                 i += 1
             return None
-        else:
-            #len(prefix) == 0:
+        elif len(prefix) == 0:
             return self
 
     def find_leaves(self, prefix: List,
@@ -542,15 +531,6 @@ class SimplePrefixTree(Autocompleter):
             if ex_leaves > 0:
                 self.remove_weight(ex_weight, ex_leaves)
 
-    def remove_leaf_weight(self, i: int, ex_weight: float,
-                           ex_leaves: int)-> Tuple[float, int]:
-        """ Takes away the weight contributed by leaves to parent trees.
-        """
-        self.subtrees[i].remove_weight(ex_weight, ex_leaves)
-        if self.subtrees[i].subtrees == []:
-            del self.subtrees[i]
-        return ex_weight, ex_leaves
-
     def remove_match(self, prefix: List, c: int = 1) -> Tuple[float, int]:
         """ Checks if given prefix is in the SimplePrefixTree and removes Tree.
         Returns weight and number of leaves of removed prefix.
@@ -564,8 +544,9 @@ class SimplePrefixTree(Autocompleter):
                     ex_weight, ex_leaves = \
                         self.subtrees[i].remove_match(prefix, c + 1)
                     if ex_leaves > 0:
-                        ex_weight, ex_leaves = \
-                            self.remove_leaf_weight(i, ex_weight, ex_leaves)
+                        self.subtrees[i].remove_weight(ex_weight, ex_leaves)
+                        if self.subtrees[i].subtrees == []:
+                            del self.subtrees[i]
                         return ex_weight, ex_leaves
                 elif c == len(prefix) and self.subtrees[i].value == prefix[:c]:
                     weight, leaves = self.subtrees[i].weight, \
@@ -573,8 +554,7 @@ class SimplePrefixTree(Autocompleter):
                     del self.subtrees[i]
                     return weight, leaves
                 i += 1
-            return -1, -1
-        else:
+            # nothing found
             return -1, -1
 
     def remove_weight(self, weight: float, leaves: int) -> None:
@@ -651,9 +631,8 @@ class CompressedPrefixTree(SimplePrefixTree):
     weight: float
     subtrees: List[CompressedPrefixTree]
     _weight_type: str
-    num_leaves: int
 
-    def add_leaf(self, value: Any, weight: float, i: int, j: int = 0) -> None:
+    def add_leaf(self, value: Any, weight: float, i: int) -> None:
         """ Adds final non-prefix value to the SimplePrefixTree as a leaf.
         """
 
@@ -662,31 +641,6 @@ class CompressedPrefixTree(SimplePrefixTree):
         last_tree.weight = float(weight)
         # was insert with j = -1, but wasn't working
         self.subtrees[i].subtrees.append(last_tree)
-
-    def check_leaves(self, i: int, w: float,
-                     value: List, past_leaf: bool) -> Tuple[int, bool]:
-        """
-        Checks if there is a leaf, adds to it if so, adds if not makes it.
-        """
-        try:
-            j = self.subtrees[i].subtree_vals().index(value)
-        except ValueError:
-            j = -1
-        if j >= 0:
-            self.subtrees[i].subtrees[j].weight += w
-            past_leaf = True
-        else:
-            # self.add_leaf(value, w, i, -1)
-            self.add_leaf(value, w, i)
-            i = self.subtrees[i].move_left(len(self.subtrees))
-            past_leaf = False
-        if past_leaf:
-            self.subtrees[i].weight += w
-            i = self.move_left(i)
-        else:
-            self.subtrees[i].agg_weight(w)
-            i = self.move_left(i)
-        return i, past_leaf
 
     def add_on(self, value: Any, w: float, prefix: List, c: int = 1) -> bool:
         """ Adds values to a non-empty tree.
@@ -704,11 +658,32 @@ class CompressedPrefixTree(SimplePrefixTree):
         # added part after 'and' since inserting ab after abc got past this.
         if similarity == len(prefix) + (-c + 1) and \
                 len(self.subtrees[i].value) == len(prefix):
+            try:
+                j = self.subtrees[i].subtree_vals().index(value)
+            except ValueError:
+                j = -1
 
-            i, past_leaf = self.check_leaves(i, w, value, past_leaf)
+            if j >= 0:
+                self.subtrees[i].subtrees[j].weight += w
+                past_leaf = True
+            else:
+                # self.add_leaf(value, w, i, -1)
+                self.add_leaf(value, w, i)
+                i = self.subtrees[i].move_left(len(self.subtrees))
+                past_leaf = False
 
+            if past_leaf:
+                self.subtrees[i].weight += w
+                i = self.move_left(i)
+            else:
+                self.subtrees[i].agg_weight(w)
+                i = self.move_left(i)
+
+        # added this case late last night
         elif 0 < similarity and \
                 similarity + 1 == len(self.subtrees[i].value) + (-c + 1):
+            # case for add('ab'), add_on('abc')
+
             # new node before existing node
             new_tree = CompressedPrefixTree(self._weight_type)
             new_tree.weight = w
@@ -717,7 +692,9 @@ class CompressedPrefixTree(SimplePrefixTree):
             # add new tree at end of list, add leaf to new tree
             self.subtrees.append(new_tree)
             j = len(self.subtrees) - 1
-
+            # ['c','a'] went directly to 'cat' without ['c','a','t'],
+            # so I added self.add(value, prefix, weight)
+            # I see, I built this for adding ab to abc, will add if:
             if len(value) == similarity:
                 self.add_leaf(value, w, j)
             else:
@@ -726,9 +703,12 @@ class CompressedPrefixTree(SimplePrefixTree):
 
             # move old tree down a level (copy, then delete original)
             self.subtrees[j].subtrees.append(self.subtrees[i])
+            # move to right position
             k = 1
             k = self.subtrees[j].move_left(k)
+            # delete original
             self.subtrees.pop(i)
+            # adjust position of new tree
             j -= 1
 
             # need to update weight of new tree first
@@ -740,7 +720,9 @@ class CompressedPrefixTree(SimplePrefixTree):
                 leaf_mass = self.subtrees[j].subtrees[k].weight
             self.subtrees[j].agg_weight(leaf_mass,
                                         self.subtrees[j].subtrees[k].num_leaves)
+            # then readjust position in case there are other trees
             j = self.move_left(j)
+
 
         elif 0 < similarity < len(self.subtrees[i].value) + (-c + 1):
             # 0 < similarity(cat, car) < len(car)
@@ -758,18 +740,35 @@ class CompressedPrefixTree(SimplePrefixTree):
             # add the old subtree by moving it down one level
             new_tree.subtrees.append(self.subtrees[i])
             self.subtrees[i] = new_tree
+
+            # adjust position based on weight of lower tree
+            # use len(self.subtrees)-1 because move_left will do nothing if
+            # i = -1. Just want to select end of list as this is where we
+            # appended the old tree above.
             i = self.subtrees[i].move_left(len(self.subtrees) - 1)
 
+            # self.agg_weight(w)
+            # adjust position of higher tree based on new weight
+            # i = self.subtrees[i].move_left(i)
+
+            # not an addition to past leaf so
+            # return False
+
         elif similarity == len(self.subtrees[i].value) + (-c + 1):
+            # 0 < similarity(care, car) = len(car) < len(prefix)
             # new node after existing node
             past_leaf = self.subtrees[i].add_on(value, w, prefix, c + 1)
             i = self.move_left(i)
 
         else:
             # there are no similar elements in the two prefixes.
+            # add prefix as is as it is a new prefix
+
             self.add(value, w, prefix, c + 1)
             i = self.move_left(len(self.subtrees)-1)
+            # return False
 
+        # makes sure original branch is in right place.
         if c == 1:
             i = self.move_left(i)
 
@@ -814,8 +813,10 @@ class CompressedPrefixTree(SimplePrefixTree):
                 break
             i += 1
 
+        # if 0 < similarity < len(self.subtrees[i].value) + (-c + 1):
         if 0 < similarity < len(prefix) + (-c + 1):
             # on the right track, recurse more
+            # if self.subtrees[i].value == prefix[:c] and c < len(prefix):
             ex_weight, ex_leaves = \
                 self.subtrees[i].remove_match(prefix, c + 1)
             if ex_leaves > 0:
@@ -829,7 +830,7 @@ class CompressedPrefixTree(SimplePrefixTree):
             # elif c == len(prefix) and self.subtrees[i].value == prefix[:c]:
             weight, leaves = self.subtrees[i].weight, \
                              self.subtrees[i].num_leaves
-            del self.subtrees[i]
+            del(self.subtrees[i])
             return weight, leaves
 
         # nothing found
@@ -900,10 +901,6 @@ def take_weight(elem: Tuple[Any, int]) -> int:
 
 
 def at_lim(limit: Optional[int], found: int) -> bool:
-    """
-    Used in autocomplete functions to check if the limit of leaf values to be
-    returned has been reached.
-    """
 
     if limit is None:
         lim = False
@@ -922,3 +919,7 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'max-nested-blocks': 4
     })
+
+
+
+
