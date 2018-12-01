@@ -109,7 +109,6 @@ class LetterAutocompleteEngine:
         self.autocompleter.remove(prefix_lst)
 
 
-
 class SentenceAutocompleteEngine:
     """An autocomplete engine that suggests strings based on a few words.
 
@@ -302,23 +301,17 @@ def sample_letter_autocomplete() -> List[Tuple[str, float]]:
     engine = LetterAutocompleteEngine({
         # NOTE: you should also try 'data/lotr.txt' for the file.
         'file': 'data/lotr.txt',
-        'autocompleter': 'simple',
+        'autocompleter': 'compressed',
         'weight_type': 'sum'
     })
-    # engine2 = LetterAutocompleteEngine({
-    #     # NOTE: you should also try 'data/lotr.txt' for the file.
-    #     'file': 'data/google_no_swears.txt',
-    #     'autocompleter': 'simple',
-    #     'weight_type': 'sum'
-    # })
-    # return engine2.autocomplete('sta', 20)
     return engine.autocomplete('frodo d', 20)
+
 
 def sample_sentence_autocomplete() -> List[Tuple[str, float]]:
     """A sample run of the sentence autocomplete engine."""
     engine = SentenceAutocompleteEngine({
         'file': 'data/google_searches.csv',
-        'autocompleter': 'simple',
+        'autocompleter': 'compressed',
         'weight_type': 'sum'
     })
     return engine.autocomplete('how to', 20)
@@ -327,8 +320,8 @@ def sample_sentence_autocomplete() -> List[Tuple[str, float]]:
 def sample_melody_autocomplete() -> None:
     """A sample run of the melody autocomplete engine."""
     engine = MelodyAutocompleteEngine({
-        'file': 'data/songbook.csv',
-        'autocompleter': 'simple',
+        'file': 'data/random_melodies_c_scale.csv',
+        'autocompleter': 'compressed',
         'weight_type': 'sum'
     })
     melodies = engine.autocomplete([0, 0], 20)
@@ -347,14 +340,4 @@ if __name__ == '__main__':
     # work even for fairly tall simple prefix trees.
     import sys
     sys.setrecursionlimit(5000)
-
-    # print(sample_letter_autocomplete())
-    # print(sample_sentence_autocomplete())
-    # sample_melody_autocomplete()
-
-    engine = MelodyAutocompleteEngine({
-        'file': 'data/songbook.csv',
-        'autocompleter': 'simple',
-        'weight_type': 'sum'
-    })
-    melodies = engine.autocomplete([0, 0], 20)
+    sample_melody_autocomplete()
