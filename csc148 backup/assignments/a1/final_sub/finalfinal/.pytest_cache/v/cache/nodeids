@@ -1,0 +1,7 @@
+[
+  "a1_sample_test.py::test_random_arrival_generator_zero",
+  "a1_sample_test.py::test_file_arrival_generator",
+  "a1_sample_test.py::test_random_moving_algorithm",
+  "a1_sample_test.py::test_pushy_passenger_moving_algorithm",
+  "a1_sample_test.py::test_short_sighted_moving_algorithm"
+]

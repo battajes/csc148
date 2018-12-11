@@ -1,0 +1,7 @@
+[
+  "a2_sample_test.py::test_simple_prefix_tree_structure",
+  "a2_sample_test.py::test_simple_prefix_tree_autocomplete",
+  "a2_sample_test.py::test_simple_prefix_tree_remove",
+  "a2_sample_test.py::test_sentence_autocompleter",
+  "a2_sample_test.py::test_compressed_prefix_tree_structure"
+]

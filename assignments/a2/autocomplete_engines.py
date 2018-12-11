@@ -301,16 +301,9 @@ def sample_letter_autocomplete() -> List[Tuple[str, float]]:
     engine = LetterAutocompleteEngine({
         # NOTE: you should also try 'data/lotr.txt' for the file.
         'file': 'data/lotr.txt',
-        'autocompleter': 'simple',
+        'autocompleter': 'compressed',
         'weight_type': 'sum'
     })
-    # engine2 = LetterAutocompleteEngine({
-    #     # NOTE: you should also try 'data/lotr.txt' for the file.
-    #     'file': 'data/google_no_swears.txt',
-    #     'autocompleter': 'simple',
-    #     'weight_type': 'sum'
-    # })
-    # return engine2.autocomplete('sta', 20)
     return engine.autocomplete('frodo d', 20)
 
 
@@ -318,7 +311,7 @@ def sample_sentence_autocomplete() -> List[Tuple[str, float]]:
     """A sample run of the sentence autocomplete engine."""
     engine = SentenceAutocompleteEngine({
         'file': 'data/google_searches.csv',
-        'autocompleter': 'simple',
+        'autocompleter': 'compressed',
         'weight_type': 'sum'
     })
     return engine.autocomplete('how to', 20)
@@ -327,8 +320,8 @@ def sample_sentence_autocomplete() -> List[Tuple[str, float]]:
 def sample_melody_autocomplete() -> None:
     """A sample run of the melody autocomplete engine."""
     engine = MelodyAutocompleteEngine({
-        'file': 'data/songbook.csv',
-        'autocompleter': 'simple',
+        'file': 'data/random_melodies_c_scale.csv',
+        'autocompleter': 'compressed',
         'weight_type': 'sum'
     })
     melodies = engine.autocomplete([0, 0], 20)
@@ -345,12 +338,5 @@ if __name__ == '__main__':
 
     # This is used to increase the recursion limit so that your sample runs
     # work even for fairly tall simple prefix trees.
-    import sys
-    sys.setrecursionlimit(5000)
-
-    engine_test = MelodyAutocompleteEngine({
-        'file': 'data/songbook.csv',
-        'autocompleter': 'simple',
-        'weight_type': 'sum'
-    })
-    melody_test = engine_test.autocomplete([0, 0], 20)
+    # import sys
+    # sys.setrecursionlimit(5000)

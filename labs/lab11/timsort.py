@@ -115,12 +115,12 @@ def timsort(lst: list) -> None:
     >>> lst
     [-1, 1, 2, 3, 4, 5, 7, 10]
     """
-    runs = find_runs(lst)
+    runs = find_runs3(lst)
 
     # Treat runs as a stack and repeatedly merge the top two runs
     while len(runs) > 1:
         run2, run1 = runs.pop(), runs.pop()
-        _merge(lst, run1[0], run1[1], run2[1])
+        _merge2(lst, run1[0], run1[1], run2[1])
         runs.append((run1[0], run2[1]))
 
     # When the loop ends, the only run should be the whole list.
@@ -166,6 +166,7 @@ def find_runs2(lst: list) -> List[Tuple[int, int]]:
     run_start = 0
     run_end = 1
     new_run = True
+    ascending = True
 
     while run_end < len(lst):
         # How can you tell if a run should continue?
@@ -194,7 +195,6 @@ def find_runs2(lst: list) -> List[Tuple[int, int]]:
             run_end = run_start + 1
             new_run = True
             reverse_run(lst, run_start, run_end)
-
 
     if lst:
         runs.append((run_start, run_end))
@@ -237,7 +237,63 @@ def find_runs3(lst: list) -> List[Tuple[int, int]]:
 
     Precondition: lst is non-empty
     """
-    pass
+
+    # Hint: this is very similar to find_runs, except
+    # you'll need to keep track of whether the "current run"
+    # is ascending or descending.
+    runs = []
+
+    # Keep track of the start and end points of a run.
+    run_start = 0
+    run_end = 1
+    new_run = True
+    ascending = True
+
+    while run_end < len(lst):
+        # How can you tell if a run should continue?
+        #   (When you do, update run_end.)
+        if new_run:
+            if lst[run_end] > lst[run_end - 1]:
+                ascending = True
+            else:
+                ascending = False
+
+        if lst[run_end] > lst[run_end - 1] and ascending:
+            run_end += 1
+            new_run = False
+        elif lst[run_end] < lst[run_end - 1] and ascending:
+
+            # found a run (that has ended)
+            while (run_end - run_start) < 64 and run_end < len(lst):
+                run_end += 1
+                insertion_sort(lst, run_start, run_end)
+
+            runs.append((run_start, run_end))
+            run_start = run_end
+            run_end = run_start + 1
+            new_run = True
+        elif lst[run_end] < lst[run_end - 1] and not ascending:
+            run_end += 1
+            new_run = False
+        elif lst[run_end] > lst[run_end - 1] and not ascending:
+
+            # found a run (that has ended)
+            while (run_end - run_start) < 64 and run_end < len(lst):
+                run_end += 1
+                insertion_sort(lst, run_start, run_end)
+
+            runs.append((run_start, run_end))
+            run_start = run_end
+            run_end = run_start + 1
+            new_run = True
+            # reverse_run(lst, run_start, run_end)
+
+    if lst and run_start < len(lst):
+        runs.append((run_start, run_end))
+        if not ascending:
+            reverse_run(lst, run_start, run_end)
+
+    return runs
 
 
 def insertion_sort(lst: list, start: int, end: int) -> None:
@@ -271,7 +327,21 @@ def _merge2(lst: list, start: int, mid: int, end: int) -> None:
 
     Precondition: lst[start:mid] and lst[mid:end] are sorted.
     """
-    pass
+
+    part_a = lst[start:mid]
+    left = start
+    right = mid
+    while left < end and right < end:
+        if part_a[0] < lst[right]:
+            lst[left] = part_a.pop(0)
+            left += 1
+        else:
+            lst[left] = lst[right]
+            right += 1
+            left += 1
+
+    if part_a:
+        lst[-len(part_a):] = part_a[:]
 
 
 ###############################################################################
@@ -279,5 +349,186 @@ def _merge2(lst: list, start: int, mid: int, end: int) -> None:
 ###############################################################################
 def timsort2(lst: list) -> None:
     """Sort the given list using the version of timsort from Task 6.
+
+    >>> lst = []
+    >>> timsort(lst)
+    >>> lst
+    []
+    >>> lst = [1]
+    >>> timsort(lst)
+    >>> lst
+    [1]
+    >>> lst = [1, 4, 7, 10, 2, 5, 3, -1]
+    >>> timsort(lst)
+    >>> lst
+    [-1, 1, 2, 3, 4, 5, 7, 10]
     """
-    pass
+    runs = find_runs4(lst)
+
+    # Treat runs as a stack and repeatedly merge the top two runs
+    while len(runs) > 1:
+        run2, run1 = runs.pop(), runs.pop()
+        _merge2(lst, run1[0], run1[1], run2[1])
+        runs.append((run1[0], run2[1]))
+
+    # When the loop ends, the only run should be the whole list.
+
+def find_runs4(lst: list) -> List[Tuple[int, int]]:
+    """Each time a run is pushed onto the stack, and the stack has size >= 3:
+    Let A, B, and C be the lengths of the three top-most runs on the stack
+    (so C is the length of the rightmost run found so far). Check these two
+    properties:
+
+    B > C
+    A > B + C
+
+    If these two properties hold, keep going and add a new run to the stack.
+
+    If these properties don’t hold, do a merge instead:
+
+    If B <= C, merge B and C.
+    If A <= B + C, merge the shorter of A and C with B. Continue merging until
+    the properties hold (or until there’s only one run on the stack).
+
+    Precondition: lst is non-empty
+    """
+
+    # Hint: this is very similar to find_runs, except
+    # you'll need to keep track of whether the "current run"
+    # is ascending or descending.
+    runs = []
+
+    # Keep track of the start and end points of a run.
+    run_start = 0
+    run_end = 1
+    new_run = True
+    ascending = True
+
+    while run_end < len(lst):
+        # How can you tell if a run should continue?
+        #   (When you do, update run_end.)
+        if new_run:
+            if lst[run_end] > lst[run_end - 1]:
+                ascending = True
+            else:
+                ascending = False
+
+        if lst[run_end] > lst[run_end - 1] and ascending:
+            run_end += 1
+            new_run = False
+        elif lst[run_end] < lst[run_end - 1] and ascending:
+
+            # found a run (that has ended)
+            while (run_end - run_start) < 64 and run_end < len(lst):
+                run_end += 1
+                insertion_sort(lst, run_start, run_end)
+
+            runs.append((run_start, run_end))
+            limit_stack(runs, lst)
+
+            run_start = run_end
+            run_end = run_start + 1
+            new_run = True
+
+        elif lst[run_end] < lst[run_end - 1] and not ascending:
+            run_end += 1
+            new_run = False
+        elif lst[run_end] > lst[run_end - 1] and not ascending:
+
+            # found a run (that has ended)
+            while (run_end - run_start) < 64 and run_end < len(lst):
+                run_end += 1
+                insertion_sort(lst, run_start, run_end)
+
+            runs.append((run_start, run_end))
+            limit_stack(runs, lst)
+
+            run_start = run_end
+            run_end = run_start + 1
+            new_run = True
+            # reverse_run(lst, run_start, run_end)
+
+    if lst and run_start < len(lst):
+        runs.append((run_start, run_end))
+        limit_stack(runs, lst)
+        if not ascending:
+            reverse_run(lst, run_start, run_end)
+
+    return runs
+
+
+def limit_stack(runs: list, lst: list) -> None:
+    """Merges runs if there are 3 or more runs in lst.
+    """
+    if len(runs) >= 3:
+
+        c, b, a = runs[-1][1] - runs[-1][0], \
+                  runs[-2][1] - runs[-2][0], \
+                  runs[-3][1] - runs[-3][0]
+
+        while (b <= c or a <= b + c) and len(runs) > 1:
+            if b <= c:
+                _merge2(lst, runs[-2][0], runs[-2][1], runs[-1][1])
+                runs[-2] = (runs[-2][0], runs[-1][1])
+                runs.pop()
+
+                # now there are 2 runs, when starting with 3
+                # need to figure out what to do when there are 2, as there will
+                # be an index error below
+                if len(runs) >= 3:
+                    c, b, a = runs[-1][1] - runs[-1][0], \
+                              runs[-2][1] - runs[-2][0], \
+                              runs[-3][1] - runs[-3][0]
+                else:
+                    # merge so len(run) == 1, ending while loop
+                    _merge2(lst, runs[-2][0], runs[-2][1], runs[-1][1])
+                    runs[-2] = (runs[-2][0], runs[-1][1])
+                    runs.pop()
+                    # doesn't matter what c, b, a are since len(runs) == 1
+
+            if a <= b + c and len(runs) > 1:
+                if a < c:
+                    _merge2(lst, runs[-3][0], runs[-3][1], runs[-2][1])
+                    runs[-3] = (runs[-3][0], runs[-2][1])
+                    del(runs[-2])
+
+                else:
+                    _merge2(lst, runs[-2][0], runs[-2][1], runs[-1][1])
+                    runs[-2] = (runs[-2][0], runs[-1][1])
+                    runs.pop()
+
+                if len(runs) >= 3:
+                    c, b, a = runs[-1][1] - runs[-1][0], \
+                              runs[-2][1] - runs[-2][0], \
+                              runs[-3][1] - runs[-3][0]
+                else:
+                    # merge so len(run) == 1, ending while loop
+                    _merge2(lst, runs[-2][0], runs[-2][1], runs[-1][1])
+                    runs[-2] = (runs[-2][0], runs[-1][1])
+                    runs.pop()
+                    # doesn't matter what c, b, a are since len(runs) == 1
+
+
+        # c, b, a = runs.pop(), runs.pop(), runs.pop()
+        # if len(b) > len(c) and len(a) > len(b) + len(c):
+        #     runs.append(a)
+        #     runs.append(b)
+        #     runs.append(c)
+        #     # returns runs to original state
+        # else:
+            # while len(b) <= len(c) or len(a) <= len(b) + len(c):
+            #     if len(b) <= len(c):
+            #         _merge2(lst, b[0], b[1], c[1])
+            #         d = (b[0], c[1])
+            #         runs.append(a)
+            #         runs.append(d)
+            #     elif len(a) <= len(b) + len(c):
+            #         if len(a) < len(c):
+            #             _merge2(lst, a[0], a[1], b[1])
+            #             d = (a[0], b[1])
+            #
+            #             runs.append(d)
+            #         else:
+            #             _merge2(lst, b[0], b[1], c[1])
+            #             d = (b[0], c[1])
+            #             runs.append(d)

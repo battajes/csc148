@@ -74,7 +74,7 @@ if True:
   pass
 elif similarity == len(prefix) + (-c + 1) and \
   len(self.subtrees[i].value) == len(prefix):
-elif similarity = len(prefix):
+elif similarity == len(prefix):
   # alternative to next case?
   # when ab is inserted to abc
   pass
